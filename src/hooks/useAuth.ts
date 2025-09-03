@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import type {
   AuthState,
   AuthMode,
-  LoginFormData,
-  SignupFormData,
+  // LoginFormData,
+  // SignupFormData,
 } from "../types/auth";
 
 export const useAuth = () => {
