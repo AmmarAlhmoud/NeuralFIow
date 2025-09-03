@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --color-neon-fuchsia: #b74fd6;
+  --color-neon-scarlet: #d64f4f;
+}
+
+@layer utilities {
+  .glassmorphic {
+    /* Light mode */
+    background: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    @apply shadow-lg;
+
+    /* Dark mode */
+    @apply dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.1)];
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .neon-glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  }
+
+  .input-glow:focus {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5),
+      0 0 20px rgba(139, 92, 246, 0.2);
+  }
+
+  .bg-gradient-animated {
+    background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
