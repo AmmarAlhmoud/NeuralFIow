@@ -51,9 +51,11 @@ export interface StatsCardProps {
 
 export interface SidebarProps {
   isCollapsed: boolean;
+  isDarkMode: boolean;
   currentPage: PageType;
   onPageChange: (page: PageType) => void;
   onToggle: () => void;
+  onThemeToggle: () => void;
   workspaces: Workspace[];
 }
 
@@ -67,4 +69,10 @@ export interface TaskDrawerProps {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
+}
+
+export interface ProfileProps {
+  isDarkMode: boolean;
+  onThemeToggle: () => void;
+  className?: string;
 }

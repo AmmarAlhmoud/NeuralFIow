@@ -6,6 +6,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
+import Profile from "./Profile";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -13,6 +14,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onPageChange,
   onToggle,
   workspaces,
+  onThemeToggle,
+  isDarkMode,
 }) => {
   const getAvatarColor = (color: string) => {
     const colors = {
@@ -60,6 +63,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
         </div>
+
+        {/* Profile */}
+
+        <Profile
+          onThemeToggle={onThemeToggle}
+          isDarkMode={isDarkMode}
+          className="flex flex-row-reverse mb-8 pb-8 border-b dark:border-white/10 border-black/10 sm:hidden"
+        />
 
         {/* Navigation */}
         <nav className="space-y-2">

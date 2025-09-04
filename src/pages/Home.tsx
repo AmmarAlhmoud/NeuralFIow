@@ -179,6 +179,8 @@ const Home: React.FC = () => {
         onPageChange={handlePageChange}
         onToggle={toggleSidebar}
         workspaces={workspaces}
+        onThemeToggle={toggleTheme}
+        isDarkMode={isDarkMode}
       />
 
       {/* Main Content */}
