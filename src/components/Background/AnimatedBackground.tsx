@@ -5,7 +5,7 @@ interface AnimatedBackgroundProps {
   children: React.ReactNode;
 }
 
-export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
+const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
   children,
 }) => (
   <div className="font-inter bg-white dark:bg-gray-950 w-full min-h-screen relative overflow-hidden">
@@ -13,3 +13,5 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
     <div className="w-full h-full">{children}</div>
   </div>
 );
+
+export default AnimatedBackground;

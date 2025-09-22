@@ -12,9 +12,31 @@ export interface SignupFormData {
 }
 
 export type AuthMode = "login" | "signup";
+export type AuthFnType = {
+  email: string;
+  password: string;
+  name?: string;
+  avatarURL?: string;
+};
 
 export interface AuthState {
   mode: AuthMode;
   isLoading: boolean;
+  title: string | null;
   message: string | null;
+}
+
+export interface AuthUser {
+  uid: string;
+  email: string | null;
+  name: string | null;
+  avatarURL: string | null;
+}
+
+export interface AuthContextType {
+  user: AuthUser | null;
+  isLoading: boolean;
+  message?: string;
+  handleAuthUser: (firebaseUser: AuthUser) => void;
+  signOut: () => Promise<void>;
 }

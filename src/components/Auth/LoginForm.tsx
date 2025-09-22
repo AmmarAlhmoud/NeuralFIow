@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { GoogleIcon } from "../../assets/Icons/GoogleIcon";
-import { GitHubIcon } from "../../assets/Icons/GitHubIcon";
+// import { GitHubIcon } from "../../assets/Icons/GitHubIcon";
 import { BrainIcon } from "../../assets/Icons/BrainIcon";
 import { type LoginFormData } from "../../types/auth";
 
@@ -142,15 +142,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <GoogleIcon />
             <span>Continue with Google</span>
           </Button>
-
-          <Button
+          {/* // TODO: FUTURE IMPLEMENTATION Placeholder for GitHub login button */}
+          {/* <Button
             type="button"
             variant="social"
             onClick={() => onSocialLogin("github")}
           >
             <GitHubIcon />
             <span>Continue with GitHub</span>
-          </Button>
+          </Button> */}
         </div>
 
         <p className="text-center dark:text-gray-400 text-gray-800 mt-8">

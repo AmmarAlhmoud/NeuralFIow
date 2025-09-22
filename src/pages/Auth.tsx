@@ -4,7 +4,7 @@ import { SignupForm } from "../components/Auth/SignupForm";
 import { Modal } from "../components/ui/Modal";
 import { useAuth } from "../hooks/useAuth";
 
-export const AuthPage: React.FC = () => {
+const AuthPage: React.FC = () => {
   const [_isDarkMode, setIsDarkMode] = useState(false);
   const { authState, switchMode, login, signup, socialLogin, clearMessage } =
     useAuth();
@@ -36,9 +36,12 @@ export const AuthPage: React.FC = () => {
       <Modal
         isOpen={!!authState.message}
         onClose={clearMessage}
-        title="Success!"
+        title={authState.title || ""}
         message={authState.message || ""}
       />
     </div>
   );
 };
+
+
+export default AuthPage;
