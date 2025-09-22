@@ -73,7 +73,10 @@ export const useAuth = () => {
 
         const firebaseUser = userCredential.user;
 
-        console.log("Firebase user:", firebaseUser);
+        const token = await getIdTokenOrThrow();
+        await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         handleAuthUser({
           uid: firebaseUser.uid,
