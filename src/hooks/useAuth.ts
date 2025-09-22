@@ -149,7 +149,7 @@ export const useAuth = () => {
           email: signupData.email,
           password: signupData.password,
           name: signupData.fullName,
-          avatarURL: "https://example.com/default-avatar.png",
+          avatarURL: "https://www.gravatar.com/avatar/?d=mp",
         });
 
         const firebaseUser = userCredential.user;
@@ -216,7 +216,6 @@ export const useAuth = () => {
         try {
           const userCredential = await signInWithGoogle();
           const firebaseUser = userCredential.user;
-
 
           const freshUser = {
             uid: firebaseUser.uid,

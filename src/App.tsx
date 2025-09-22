@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import type { AuthUser } from "./types/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { signOut } from "./firebase/auth";
 import { auth } from "./firebase/config";
 import HomePage from "./pages/Home";
 import AuthPage from "./pages/Auth";
@@ -61,6 +62,7 @@ const App: React.FC = () => {
         localStorage.setItem("authUser", "true");
       } else {
         setUser(null);
+        setLoading(false);
         localStorage.removeItem("authUser");
       }
     });
@@ -81,16 +83,24 @@ const App: React.FC = () => {
     );
   }
 
+  const logoutHandler = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
+
   console.log("Current user:", user);
 
   return (
     <AuthProvider
       value={{
         user,
-        isLoading: false,
+        isLoading: loading,
         message: undefined,
         handleAuthUser,
-        signOut: async () => {},
+        logout: logoutHandler,
       }}
     >
       <RouterProvider router={router} />

@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
 import Profile from "./Profile";
+import { useAuthContext } from "../../hooks/useAuth";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -17,6 +18,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onThemeToggle,
   isDarkMode,
 }) => {
+  const { user, logout } = useAuthContext();
+
   const getAvatarColor = (color: string) => {
     const colors = {
       violet: "from-violet-500 to-purple-600",
@@ -69,6 +72,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         <Profile
           onThemeToggle={onThemeToggle}
           isDarkMode={isDarkMode}
+          userData={user}
+          handleLogout={logout}
           className="flex flex-row-reverse mb-8 pb-8 border-b dark:border-white/10 border-black/10 sm:hidden"
         />
 

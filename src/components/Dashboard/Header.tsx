@@ -2,12 +2,15 @@ import React from "react";
 import { Search } from "lucide-react";
 import { type HeaderProps } from "../../types/dashboard";
 import Profile from "./Profile";
+import { useAuthContext } from "../../hooks/useAuth";
 
 const Header: React.FC<HeaderProps> = ({
   currentPage,
   isDarkMode,
   onThemeToggle,
 }) => {
+  const { user, logout } = useAuthContext();
+
   const getPageTitle = (page: string) => {
     const titles = {
       dashboard: "Dashboard",
@@ -64,6 +67,8 @@ const Header: React.FC<HeaderProps> = ({
           <Profile
             onThemeToggle={onThemeToggle}
             isDarkMode={isDarkMode}
+            userData={user}
+            handleLogout={logout}
             className="hidden flex-1 sm:flex sm:flex-col-reverse xl:flex-row items-center xl:justify-end space-y-4 xl:space-y-0 xl:space-x-4"
           />
         </div>

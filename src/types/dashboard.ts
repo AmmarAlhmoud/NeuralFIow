@@ -1,3 +1,5 @@
+import type { AuthUser } from "./auth";
+
 export interface Task {
   id: string;
   title: string;
@@ -73,6 +75,8 @@ export interface TaskDrawerProps {
 
 export interface ProfileProps {
   isDarkMode: boolean;
+  userData: AuthUser | null;
   onThemeToggle: () => void;
   className?: string;
+  handleLogout: () => Promise<void>;
 }

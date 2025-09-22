@@ -38,5 +38,5 @@ export interface AuthContextType {
   isLoading: boolean;
   message?: string;
   handleAuthUser: (firebaseUser: AuthUser) => void;
-  signOut: () => Promise<void>;
+  logout: () => Promise<void>;
 }
