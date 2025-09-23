@@ -16,8 +16,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={`w-full ${
-            icon ? "pl-12" : "pl-4"
-          } pr-4 py-4 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-2xl dark:text-white  text-black dark:placeholder-gray-400 placeholder-gray-800 focus:outline-none input-glow transition-all duration-300 ${className}`}
+            icon ? (props.type === "color" ? "pl-7" : "pl-12") : "pl-4"
+          }  pr-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-2xl dark:text-white  text-black dark:placeholder-gray-400 placeholder-gray-800 focus:outline-none input-glow transition-all duration-300 ${className}`}
           {...props}
         />
       </div>

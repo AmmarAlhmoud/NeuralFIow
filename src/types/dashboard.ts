@@ -1,4 +1,5 @@
 import type { AuthUser } from "./auth";
+import type { Workspace } from "./workspace";
 
 export interface Task {
   id: string;
@@ -22,12 +23,6 @@ export interface TeamMember {
   isOnline: boolean;
 }
 
-export interface Workspace {
-  id: string;
-  name: string;
-  memberCount: number;
-  color: string;
-}
 
 export type PageType = "dashboard" | "analytics" | "settings";
 
@@ -59,6 +54,7 @@ export interface SidebarProps {
   onToggle: () => void;
   onThemeToggle: () => void;
   workspaces: Workspace[];
+  setWorkspacesModal: (status: boolean) => void;
 }
 
 export interface HeaderProps {
@@ -80,3 +76,4 @@ export interface ProfileProps {
   className?: string;
   handleLogout: () => Promise<void>;
 }
+

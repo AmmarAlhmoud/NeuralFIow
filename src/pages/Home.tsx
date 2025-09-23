@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
 import Header from "../components/Dashboard/Header";
 import TaskDrawer from "../components/Dashboard/TaskDrawer";
 import DashboardPage from "../pages/Dashboard";
 import AnalyticsPage from "../pages/Analytics";
 import SettingsPage from "../pages/Settings";
-import type { Task, TeamMember, Workspace, PageType } from "../types/dashboard";
+import type { Task, TeamMember, PageType } from "../types/dashboard";
+import type { Workspace } from "../types/workspace";
+import { useAuthContext } from "../hooks/useAuth";
+import { WorkspaceModal } from "../components/ui/WorkspaceModal";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthContext();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [workspacesModal, setWorkspacesModal] = useState(false);
+  const [workspacesData, setWorkspacesData] = useState<Workspace | null>();
 
   const getCurrentPage = (): PageType => {
     if (location.pathname.includes("analytics")) return "analytics";
@@ -23,6 +30,8 @@ const Home: React.FC = () => {
     return "dashboard";
   };
   const currentPage: PageType = getCurrentPage();
+
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
 
   // Mock Data
   const tasks: Task[] = [
@@ -102,11 +111,6 @@ const Home: React.FC = () => {
     },
   ];
 
-  const workspaces: Workspace[] = [
-    { id: "1", name: "Marketing AI", memberCount: 12, color: "violet" },
-    { id: "2", name: "Product Dev", memberCount: 8, color: "cyan" },
-  ];
-
   useEffect(() => {
     if (localStorage.getItem("theme") === "dark") {
       setIsDarkMode(true);
@@ -152,6 +156,59 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleModalStatus = (status: boolean) => {
+    setWorkspacesModal(status);
+  };
+
+  const createWorkspaceHandler = (formData: Workspace) => {
+    if (!user) {
+      toast.error("Failed to create workspace try again");
+      return;
+    }
+    const data: Workspace = { ...formData, ownerId: user.uid };
+    setWorkspacesData(data);
+  };
+
+  useEffect(() => {
+    const getWorkspaces = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/workspaces`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        console.log("Fetched workspaces:", data);
+        setWorkspaces(data.data);
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      }
+    };
+    const createWorkspace = async (workspace: Workspace) => {
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/workspaces`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(workspace),
+        });
+        setWorkspacesData(null);
+        toast.success("Workspace created successfully!");
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      }
+    };
+
+    if (workspacesData) {
+      createWorkspace(workspacesData);
+    }
+    if (user && !workspacesData) {
+      getWorkspaces();
+    }
+  }, [user, workspacesData]);
+
+  console.log(workspaces);
+
   return (
     <div className="min-h-screen relative overflow-x-hidden transition-all duration-500 text-gray-900 dark:text-gray-100">
       {/* Particle Background */}
@@ -181,6 +238,7 @@ const Home: React.FC = () => {
         workspaces={workspaces}
         onThemeToggle={toggleTheme}
         isDarkMode={isDarkMode}
+        setWorkspacesModal={handleModalStatus}
       />
 
       {/* Main Content */}
@@ -210,6 +268,15 @@ const Home: React.FC = () => {
         isOpen={isDrawerOpen}
         onClose={closeTaskDrawer}
       />
+
+      {/* Modal Root */}
+      {workspacesModal && (
+        <WorkspaceModal
+          isOpen={workspacesModal}
+          onClose={() => setWorkspacesModal(false)}
+          onSubmit={createWorkspaceHandler}
+        />
+      )}
     </div>
   );
 };

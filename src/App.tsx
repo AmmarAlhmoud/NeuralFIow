@@ -10,6 +10,8 @@ import AuthPage from "./pages/Auth";
 import ProtectedRouteWithUser from "./pages/ProtectedRouteWithUser";
 import ProtectedRouteNoUser from "./pages/ProtectedRouteNoUser";
 import AnimatedBackground from "./components/Background/AnimatedBackground";
+import { Toaster } from "react-hot-toast";
+import { X, Check } from "lucide-react";
 
 const router = createBrowserRouter([
   {
@@ -130,6 +132,23 @@ const App: React.FC = () => {
       }}
     >
       <RouterProvider router={router} />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          className: "rounded-2xl shadow-xl h-14",
+          style: {
+            background:
+              "linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23)",
+            color: "#fff",
+          },
+          success: {
+            icon: <Check className="h-5 w-5 text-green-600" />,
+          },
+          error: {
+            icon: <X className="h-5 w-5 text-red-600" />,
+          },
+        }}
+      />
     </AuthProvider>
   );
 };
