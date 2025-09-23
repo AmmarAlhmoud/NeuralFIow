@@ -74,8 +74,10 @@ export const useAuth = () => {
         const firebaseUser = userCredential.user;
 
         const token = await getIdTokenOrThrow();
-        await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/auth`, {
+          method: "POST",
           headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
 
         handleAuthUser({
@@ -166,8 +168,10 @@ export const useAuth = () => {
 
         // Write user to DB on the backend
         const token = await getIdTokenOrThrow();
-        await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/auth`, {
+          method: "POST",
           headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
 
         handleAuthUser(freshUser);
@@ -229,8 +233,10 @@ export const useAuth = () => {
 
           // Bootstrap backend user
           const token = await getIdTokenOrThrow();
-          await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+          await fetch(`${import.meta.env.VITE_API_URL}/auth`, {
+            method: "POST",
             headers: { Authorization: `Bearer ${token}` },
+            credentials: "include",
           });
 
           handleAuthUser(freshUser);

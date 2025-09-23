@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import type { AuthUser } from "./types/auth";
@@ -43,12 +43,26 @@ const App: React.FC = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const handleAuthUser = (firebaseUser: AuthUser) => {
-    setUser(firebaseUser);
-  };
+  // logout handler
+  const logoutHandler = useCallback(async () => {
+    try {
+      // Sign out from Firebase
+      await signOut();
 
+      // Call backend to remove cookie
+      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Error during logout:", err);
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
+  // Firebase auth listener
   useEffect(() => {
-    // Listen for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const authUser: AuthUser = {
@@ -58,23 +72,45 @@ const App: React.FC = () => {
           avatarURL: firebaseUser.photoURL,
         };
         setUser(authUser);
-        setLoading(false);
-        localStorage.setItem("authUser", "true");
       } else {
         setUser(null);
-        setLoading(false);
-        localStorage.removeItem("authUser");
       }
+      setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
+
+  // Backend session check
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth`, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        if (res.status === 401) {
+          await logoutHandler();
+        }
+      } catch (err) {
+        console.error("Session check failed:", err);
+        await logoutHandler();
+      }
+    };
+
+    // check immediately on load
+    checkSession();
+
+    // check every 30 seconds
+    const interval = setInterval(checkSession, 30 * 1000);
+    return () => clearInterval(interval);
+  }, [logoutHandler]);
 
   if (loading) {
     return (
       <AnimatedBackground>
-        <div className="min-h-screen flex justify-center align-center mx-auto   bg-gradient-animated  text-white">
+        <div className="min-h-screen flex justify-center items-center bg-gradient-animated text-white">
           <div className="flex items-center justify-center space-x-2">
             <div className="animate-spin rounded-full h-10 w-10 border-b-3 border-white"></div>
           </div>
@@ -83,23 +119,13 @@ const App: React.FC = () => {
     );
   }
 
-  const logoutHandler = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error during sign out:", error);
-    }
-  };
-
-  console.log("Current user:", user);
-
   return (
     <AuthProvider
       value={{
         user,
         isLoading: loading,
         message: undefined,
-        handleAuthUser,
+        handleAuthUser: (u) => setUser(u),
         logout: logoutHandler,
       }}
     >
