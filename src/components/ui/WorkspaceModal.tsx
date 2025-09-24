@@ -100,8 +100,8 @@ export const WorkspaceModal: React.FC<WorkspaceModalProps> = ({
             />
           </div>
 
-          <Button type="submit" className="px-6 py-2">
-            Continue
+          <Button type="submit" size="lg-full" className="px-6 py-2">
+            Create Workspace
           </Button>
         </form>
       </div>

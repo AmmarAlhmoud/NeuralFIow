@@ -59,7 +59,7 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
         <p className="text-gray-400 mb-4">{messagesList}</p>
-        <Button onClick={onClose} className="px-6 py-2">
+        <Button onClick={onClose} size="lg-full" className="px-6 py-2">
           Continue
         </Button>
       </div>

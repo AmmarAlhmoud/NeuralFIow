@@ -139,7 +139,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           }
         />
 
-        <Button type="submit" isLoading={isLoading}>
+        <Button type="submit" size="lg-full" isLoading={isLoading}>
           Create Account
         </Button>
 

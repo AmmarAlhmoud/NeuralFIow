@@ -118,7 +118,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </button>
         </div>
 
-        <Button type="submit" isLoading={isLoading}>
+        <Button type="submit" size="lg-full" isLoading={isLoading}>
           Sign In
         </Button>
 
@@ -137,6 +137,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Button
             type="button"
             variant="social"
+            size="lg-full"
             onClick={() => onSocialLogin("google")}
           >
             <GoogleIcon />
