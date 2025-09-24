@@ -6,6 +6,9 @@
   --font-inter: "Inter", sans-serif;
   --color-neon-fuchsia: #b74fd6;
   --color-neon-scarlet: #d64f4f;
+  --sb-track-color: #2c2c2c;
+  --sb-thumb-color: #6310ca;
+  --sb-size: 8px;
 }
 
 @layer utilities {
@@ -46,6 +49,20 @@
 
   .animate-fade-in {
     animation: fadeIn 0.8s ease-out;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 30px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 30px;
   }
 }
 
