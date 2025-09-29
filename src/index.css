@@ -9,6 +9,7 @@
   --sb-track-color: #2c2c2c;
   --sb-thumb-color: #6310ca;
   --sb-size: 8px;
+  --scrolling: 0;
 }
 
 @layer utilities {
@@ -19,7 +20,6 @@
     backdrop-filter: blur(20px);
     border-radius: 1rem;
     @apply shadow-lg;
-
     /* Dark mode */
     @apply dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.1)];
   }
@@ -63,6 +63,16 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: var(--sb-thumb-color);
     border-radius: 30px;
+    scroll-behavior: smooth;
+  }
+
+  html[style*="--scrolling: 1"] * {
+    pointer-events: none !important;
+  }
+
+  html[style*="--scrolling: 1"] *:hover {
+    background-color: inherit !important;
+    transform: none !important;
   }
 }
 

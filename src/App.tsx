@@ -1,17 +1,24 @@
 import { useEffect, useState, useCallback } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
-import type { AuthUser } from "./types/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { Toaster } from "react-hot-toast";
+import { X, Check } from "lucide-react";
+import type { AuthUser } from "./types/auth";
 import { signOut } from "./firebase/auth";
 import { auth } from "./firebase/config";
-import HomePage from "./pages/Home";
+import { useSelector } from "react-redux";
+import { type RootState } from "./store/store";
+import MainPage from "./pages/Main";
 import AuthPage from "./pages/Auth";
+import DashboardPage from "./pages/Dashboard";
+import ProjectsPage from "./pages/Projects";
+import AnalyticsPage from "./pages/Analytics";
+import SettingsPage from "./pages/Settings";
 import ProtectedRouteWithUser from "./pages/ProtectedRouteWithUser";
 import ProtectedRouteNoUser from "./pages/ProtectedRouteNoUser";
 import AnimatedBackground from "./components/Background/AnimatedBackground";
-import { Toaster } from "react-hot-toast";
-import { X, Check } from "lucide-react";
+import Loading from "./components/ui/Loading";
 
 const router = createBrowserRouter([
   {
@@ -19,14 +26,21 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRouteWithUser>
         <AnimatedBackground>
-          <HomePage />
+          <MainPage />
         </AnimatedBackground>
       </ProtectedRouteWithUser>
     ),
     children: [
-      { path: "", element: <HomePage /> },
-      { path: "analytics", element: <HomePage /> },
-      { path: "settings", element: <HomePage /> },
+      {
+        path: "workspace/:workspaceId",
+        element: <DashboardPage />,
+      },
+      {
+        path: "workspace/:workspaceId/project/:projectId",
+        element: <ProjectsPage />,
+      },
+      { path: "workspace/:workspaceId/analytics", element: <AnalyticsPage /> },
+      { path: "workspace/:workspaceId/settings", element: <SettingsPage /> },
     ],
   },
   {
@@ -43,6 +57,7 @@ const router = createBrowserRouter([
 
 const App: React.FC = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
   const [loading, setLoading] = useState(true);
 
   // logout handler
@@ -109,13 +124,19 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [logoutHandler]);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
   if (loading) {
     return (
       <AnimatedBackground>
         <div className="min-h-screen flex justify-center items-center bg-gradient-animated text-white">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-3 border-white"></div>
-          </div>
+          <Loading />
         </div>
       </AnimatedBackground>
     );

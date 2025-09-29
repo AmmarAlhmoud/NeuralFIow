@@ -1,10 +1,11 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Moon, Sun, Bell, LogOut } from "lucide-react";
+import type { AppDispatch, RootState } from "../../store/store";
 import { type ProfileProps } from "../../types/dashboard";
+import { appActions } from "../../store/appSlice";
 
 const Profile: React.FC<ProfileProps> = ({
-  onThemeToggle,
-  isDarkMode,
   className,
   userData,
   handleLogout,
@@ -13,12 +14,15 @@ const Profile: React.FC<ProfileProps> = ({
     ? userData.avatarURL.replace(/=s0$/, "=s200")
     : "https://www.gravatar.com/avatar/?d=mp";
 
+  const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
+  const dipsatch = useDispatch<AppDispatch>();
+
   return (
     <section className={`overflow-hidden ${className}`}>
       <div className="flex flex-col justify-between px-4 sm:mt-4 xl:mt-0 sm:flex-row sm:items-center sm:space-x-3">
         {/* Theme Toggle */}
         <button
-          onClick={onThemeToggle}
+          onClick={() => dipsatch(appActions.toggleTheme())}
           className="p-3 rounded-xl dark:hover:bg-white/10 hover:bg-black/10 group transition-all"
         >
           {isDarkMode ? (

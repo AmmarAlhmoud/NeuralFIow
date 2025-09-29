@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { type HeaderProps } from "../../types/dashboard";
 import Profile from "./Profile";
@@ -6,16 +7,17 @@ import { useAuthContext } from "../../hooks/useAuth";
 
 const Header: React.FC<HeaderProps> = ({
   currentPage,
-  isDarkMode,
-  onThemeToggle,
 }) => {
   const { user, logout } = useAuthContext();
+  const { workspaceId } = useParams();
 
   const getPageTitle = (page: string) => {
     const titles = {
+      home: "Home",
       dashboard: "Dashboard",
       analytics: "Analytics",
       settings: "Settings",
+      project: "Project",
     };
     return titles[page as keyof typeof titles] || "Dashboard";
   };
@@ -50,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({
               <div className="relative group">
                 <input
                   type="text"
+                  disabled={workspaceId === undefined}
                   placeholder="Search anything..."
                   className="w-60 xl:w-80 pl-12 pr-4 py-2.5 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl 
                          focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 
@@ -65,8 +68,6 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Right Section */}
           <Profile
-            onThemeToggle={onThemeToggle}
-            isDarkMode={isDarkMode}
             userData={user}
             handleLogout={logout}
             className="hidden flex-1 sm:flex sm:flex-col-reverse xl:flex-row items-center xl:justify-end space-y-4 xl:space-y-0 xl:space-x-4"

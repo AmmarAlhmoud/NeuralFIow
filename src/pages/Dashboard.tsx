@@ -1,27 +1,87 @@
 import React from "react";
 import { Check, Star, Target, Users, Plus } from "lucide-react";
-import TaskCard from "../components/Dashboard/TaskCard";
 import StatsCard from "../components/Dashboard/StatsCard";
-import { type Task } from "../types/dashboard";
+import { Button } from "../components/ui/Button";
+import ProjectCard from "../components/Dashboard/ProjectCard";
+import Loading from "../components/ui/Loading";
+import { appActions } from "../store/appSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { type RootState } from "../store/store";
 
-interface DashboardPageProps {
-  tasks: Task[];
-  onTaskClick: (task: Task) => void;
-}
+const DashboardPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const projects = useSelector((state: RootState) => state.app.projectsData);
 
-const DashboardPage: React.FC<DashboardPageProps> = ({
-  tasks,
-  onTaskClick,
-}) => {
   const columns = [
-    { id: "todo", title: "To Do", count: 8, color: "gray-400" },
-    { id: "inprogress", title: "In Progress", count: 5, color: "cyan-400" },
-    { id: "done", title: "Done", count: 12, color: "green-400" },
+    { id: "active", title: "Active", color: "bg-green-500" },
+    { id: "archived", title: "Archived", color: "bg-gray-400" },
+    { id: "completed", title: "Completed", color: "bg-cyan-500" },
   ];
+
+  let projectsList: React.ReactNode;
+
+  if (projects === undefined) {
+    projectsList = (
+      <div className="text-sm text-center min-h-38 mt-36">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (projects !== undefined && projects?.length === 0) {
+    projectsList = (
+      <div className="text-lg min-h-38 mt-36 text-gray-700 dark:text-gray-500 text-center">
+        No projects available
+      </div>
+    );
+  }
+
+  if (projects !== undefined && projects?.length > 0) {
+    projectsList = (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-134 max-h-134 overflow-y-scroll custom-scrollbar">
+        {columns.map((column) => {
+          const columnProjects = projects.filter(
+            (project) => project.status === column.id
+          );
+          const count = columnProjects.length;
+          return (
+            <div key={column.id} className="space-y-4">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-3 h-3 ${column.color} rounded-full ${
+                      column.id === "active" ? "animate-pulse" : ""
+                    }`}
+                  ></div>
+                  <h3 className="text-lg font-semibold dark:text-gray-300 text-black">
+                    {column.title}
+                  </h3>
+                </div>
+                <span
+                  className={`bg-${column.color.split("-")[0]}-700 text-${
+                    column.color
+                  } px-3 py-1 rounded-full text-sm font-medium`}
+                >
+                  {count}
+                </span>
+              </div>
+
+              <div className="w-full py-2 px-4 flex flex-col space-y-4">
+                {projects
+                  .filter((project) => project.status === column.id)
+                  .map((project) => (
+                    <ProjectCard key={project._id} project={project} />
+                  ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 pb-6">
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           icon={<Check className="w-6 h-6 text-white" />}
@@ -61,7 +121,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
         />
       </div>
 
-      {/* Kanban Board */}
       <div className="glassmorphic rounded-2xl p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -72,52 +131,18 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
               AI-powered task management with intelligent prioritization
             </p>
           </div>
-          <button className="relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg group">
-            <span className="flex items-center space-x-2">
-              <Plus className="w-5 h-5" />
-              <span>Create Task</span>
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-          </button>
+          <Button
+            type="button"
+            variant="gradient"
+            className="flex space-x-2 px-4 py-0"
+            onClick={() => dispatch(appActions.setProjectModal(true))}
+          >
+            <Plus />
+            <span>Create Project</span>
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {columns.map((column) => (
-            <div key={column.id} className="space-y-4">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-3 h-3 bg-${column.color} rounded-full ${
-                      column.id === "inprogress" ? "animate-pulse" : ""
-                    }`}
-                  ></div>
-                  <h3 className="text-lg font-semibold dark:text-gray-300 text-black">
-                    {column.title}
-                  </h3>
-                </div>
-                <span
-                  className={`bg-${column.color.split("-")[0]}-700 text-${
-                    column.color
-                  } px-3 py-1 rounded-full text-sm font-medium`}
-                >
-                  {column.count}
-                </span>
-              </div>
-
-              <div className="space-y-4">
-                {tasks
-                  .filter((task) => task.status === column.id)
-                  .map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      onTaskClick={onTaskClick}
-                    />
-                  ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {projectsList}
       </div>
     </div>
   );

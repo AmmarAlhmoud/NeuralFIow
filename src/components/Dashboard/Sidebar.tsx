@@ -5,10 +5,13 @@ import {
   Settings,
   ChevronLeft,
   Plus,
+  Home,
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
 import Profile from "./Profile";
 import { useAuthContext } from "../../hooks/useAuth";
+import { Button } from "../ui/Button";
+import WorkspaceItem from "./WorkspaceItem";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -16,31 +19,31 @@ const Sidebar: React.FC<SidebarProps> = ({
   onPageChange,
   onToggle,
   workspaces,
-  onThemeToggle,
-  isDarkMode,
   setWorkspacesModal,
 }) => {
   const { user, logout } = useAuthContext();
 
-  const shadeColor = (hex: string, percent: number) => {
-    const num = parseInt(hex.replace("#", ""), 16);
-    const r = Math.min(255, Math.max(0, ((num >> 16) & 0xff) + percent));
-    const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + percent));
-    const b = Math.min(255, Math.max(0, (num & 0xff) + percent));
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  };
+  const navigationItemsNoWorkspace = [
+    {
+      id: "home",
+      icon: Home,
+      label: "Home",
+    },
+  ];
 
-  const getGradientFromColor = (hex: string) => {
-    const lighter = shadeColor(hex, 40); // +40 to lighten
-    const darker = shadeColor(hex, -40); // -40 to darken
-    return `linear-gradient(135deg, ${lighter}, ${darker})`;
-  };
-
-  const navigationItems = [
+  const navigationItemsWithWorkspace = [
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { id: "analytics", icon: BarChart3, label: "Analytics" },
     { id: "settings", icon: Settings, label: "Settings" },
   ];
+
+  let navigationItems = [];
+
+  if (currentPage === "home") {
+    navigationItems = navigationItemsNoWorkspace;
+  } else {
+    navigationItems = navigationItemsWithWorkspace;
+  }
 
   let workspacesList: React.ReactNode;
 
@@ -52,29 +55,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   if (workspaces?.length > 0) {
     workspacesList = workspaces.map((workspace) => (
-      <div
+      <WorkspaceItem
         key={workspace._id}
-        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/5 cursor-pointer group transition-all"
-      >
-        <div
-          className={`w-8 h-8 bg-gradient-to-r rounded-lg flex items-center justify-center`}
-          style={{
-            background: getGradientFromColor(workspace.color!),
-          }}
-        >
-          <span className="dark:text-white text-black font-bold text-sm">
-            {workspace.name[0]}
-          </span>
-        </div>
-        <div className="flex-1">
-          <div className="text-sm font-medium dark:text-gray-300  text-gray-700 dark:group-hover:text-white group-hover:text-black">
-            {workspace.name}
-          </div>
-          <div className="text-xs text-gray-500">
-            {workspace.members?.length} members
-          </div>
-        </div>
-      </div>
+        workspace={workspace}
+        currentPage={currentPage}
+      />
     ));
   }
 
@@ -112,8 +97,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Profile */}
 
         <Profile
-          onThemeToggle={onThemeToggle}
-          isDarkMode={isDarkMode}
           userData={user}
           handleLogout={logout}
           className="flex flex-row-reverse mb-8 pb-8 border-b dark:border-white/10 border-black/10 sm:hidden"
@@ -154,24 +137,25 @@ const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Workspaces */}
-        {!isCollapsed && (
+        {currentPage !== "home" && !isCollapsed && (
           <div className="mt-8 pt-8 border-t dark:border-white/10 border-black/10">
             <div className="text-xs font-semibold dark:text-gray-400 text-gray-800 mb-4 tracking-wider uppercase">
               Workspaces
             </div>
             <div className="space-y-3">
-              <div className="h-60 overflow-y-scroll custom-scrollbar">{workspacesList}</div>
+              <div className="h-60 overflow-y-scroll custom-scrollbar">
+                {workspacesList}
+              </div>
               <div className="flex flex-col mt-3">
-                <button
+                <Button
+                  type="button"
+                  variant="gradient"
+                  className="flex space-x-2"
                   onClick={() => setWorkspacesModal(true)}
-                  className="relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg group"
                 >
-                  <span className="flex items-center space-x-2">
-                    <Plus className="w-5 h-5" />
-                    <span>Create Workspace</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
+                  <Plus />
+                  <span>Create Workspace</span>
+                </Button>
               </div>
             </div>
           </div>

@@ -2,11 +2,7 @@ import React from "react";
 import { Plus, Menu } from "lucide-react";
 import { type TeamMember } from "../types/dashboard";
 
-interface SettingsPageProps {
-  teamMembers: TeamMember[];
-}
-
-const SettingsPage: React.FC<SettingsPageProps> = ({ teamMembers }) => {
+const SettingsPage: React.FC = () => {
   const getAvatarColor = (color: string) => {
     const colors = {
       violet: "from-violet-500 to-purple-600",
@@ -37,6 +33,33 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ teamMembers }) => {
       label: "Workflow optimization",
       description: "AI suggests process improvements",
       enabled: true,
+    },
+  ];
+
+  const teamMembers: TeamMember[] = [
+    {
+      id: "1",
+      name: "Alex Chen",
+      email: "alex@neuralflow.ai",
+      role: "Product Lead",
+      avatar: "violet",
+      isOnline: true,
+    },
+    {
+      id: "2",
+      name: "Sarah Rodriguez",
+      email: "sarah@neuralflow.ai",
+      role: "AI Engineer",
+      avatar: "cyan",
+      isOnline: true,
+    },
+    {
+      id: "3",
+      name: "Marcus Kim",
+      email: "marcus@neuralflow.ai",
+      role: "UX Designer",
+      avatar: "green",
+      isOnline: false,
     },
   ];
 
