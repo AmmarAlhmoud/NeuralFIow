@@ -1,15 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, FileText, Plus, Zap, Star } from "lucide-react";
-import { type TaskDrawerProps } from "../../types/dashboard";
+import { type Task } from "../../types/workspace";
+import type { AppDispatch } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { appActions } from "../../store/appSlice";
 
-const TaskDrawer: React.FC<TaskDrawerProps> = ({ task, isOpen, onClose }) => {
+interface TaskDrawerProps {
+  task: Task | null;
+  isOpen: boolean | null;
+}
+
+const TaskDrawer: React.FC<TaskDrawerProps> = ({ task, isOpen }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (isOpen) {
+      const scrollY = window.scrollY;
+
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+    }
+
+    return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, parseInt(scrollY || "0") * -1);
+    };
+  }, [isOpen]);
+
   if (!task) return null;
 
   return (
     <>
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30"
-        onClick={onClose}
+        onClick={() => dispatch(appActions.setTaskDrawer(false))}
       ></div>
       <div
         className={`fixed right-0 top-0 h-full w-96 glassmorphic z-40 transform transition-transform duration-400 ${
@@ -22,7 +52,7 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ task, isOpen, onClose }) => {
               {task.title}
             </h2>
             <button
-              onClick={onClose}
+              onClick={() => dispatch(appActions.setTaskDrawer(false))}
               className="dark:text-gray-400 dark:hover:text-white text-gray-700 hover:text-black transition-colors"
             >
               <X className="w-6 h-6" />
