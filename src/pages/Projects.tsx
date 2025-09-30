@@ -8,6 +8,8 @@ import { useAuthContext } from "../hooks/useAuth";
 import { TaskModal } from "../components/Dashboard/TaskModal";
 import toast from "react-hot-toast";
 import TaskDrawer from "../components/Dashboard/TaskDrawer";
+import { appActions } from "../store/appSlice";
+import { ConfirmationModal } from "../components/ui/ConfirmationModal";
 
 const ProjectPage: React.FC = () => {
   const { user } = useAuthContext();
@@ -19,23 +21,39 @@ const ProjectPage: React.FC = () => {
   const isTaskDrawer = useSelector(
     (state: RootState) => state.app.isTaskDrawer
   );
+  const isConfirmationModal = useSelector(
+    (state: RootState) => state.app.isConfirmationModal
+  );
   const [tasks, setTasks] = useState<Task[] | undefined>([]);
   const [taskData, setTaskData] = useState<Task | null>();
   const [updateTaskData, setUpdateTaskData] = useState<Task | null>();
+  const [deleteAction, setDeleteAction] = useState<boolean>(false);
 
-  const createTaskHandler = (formData: Task) => {
+  const taskInfoHandler = (formData: Task, type: "create" | "update") => {
     if (!user) {
       toast.error("Failed to create task try again");
       return;
     }
 
-    if (projectId) {
-      const data: Task = { ...formData, projectId };
+    let data: Task;
+
+    if (projectId && type === "create") {
+      data = { ...formData, projectId };
       setTaskData(data);
       return;
     }
 
-    toast.error("Failed to create Task. Please try again.");
+    if (projectId && type === "update") {
+      data = { ...formData, projectId };
+      setUpdateTaskData(data);
+      return;
+    }
+
+    if (projectId && type === "create") {
+      toast.error("Failed to create Task. Please try again.");
+    } else {
+      toast.error("Failed to update Task. Please try again.");
+    }
   };
 
   // Mock Data
@@ -126,16 +144,73 @@ const ProjectPage: React.FC = () => {
         toast.error("Failed to create Task. Please try again.");
       }
     };
+    const updateTask = async (task: Task) => {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_API_URL}/tasks/${
+            task._id
+          }?workspaceId=${workspaceId}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(task),
+          }
+        );
+        dispatch(appActions.setClickTask(null));
+        toast.success("Task updated successfully!");
+      } catch (_) {
+        toast.error("Failed to update Task. Please try again.");
+      }
+    };
+    const deleteTask = async (task: Task) => {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_API_URL}/tasks/${
+            task._id
+          }?workspaceId=${workspaceId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        dispatch(appActions.setClickTask(null));
+        toast.success("Task deleted successfully!");
+      } catch (_) {
+        toast.error("Failed to deleted Task. Please try again.");
+      }
+    };
 
     if (taskData) {
       createTask(taskData);
       setTaskData(null);
     }
 
+    if (updateTaskData) {
+      updateTask(updateTaskData);
+      setUpdateTaskData(null);
+    }
+
+    if (selectedTask && deleteAction) {
+      deleteTask(selectedTask);
+      setDeleteAction(false);
+    }
+
     if (user) {
       getTasks();
     }
-  }, [user, dispatch, taskData, projectId, workspaceId]);
+  }, [
+    user,
+    dispatch,
+    taskData,
+    projectId,
+    workspaceId,
+    updateTaskData,
+    selectedTask,
+    deleteAction,
+  ]);
 
   return (
     <>
@@ -143,11 +218,20 @@ const ProjectPage: React.FC = () => {
       {isTaskModal && (
         <TaskModal
           isOpen={isTaskModal}
-          onSubmit={createTaskHandler}
-          initialData={updateTaskData}
+          onSubmit={taskInfoHandler}
+          initialData={selectedTask}
         />
       )}
       {isTaskDrawer && <TaskDrawer task={selectedTask} isOpen={isTaskDrawer} />}
+      {isConfirmationModal && (
+        <ConfirmationModal
+          isOpen={isConfirmationModal}
+          action={() => setDeleteAction(true)}
+          title={"Confirmation"}
+          message={"Are you sure you want to delete this task?"}
+          type="task"
+        />
+      )}
     </>
   );
 };

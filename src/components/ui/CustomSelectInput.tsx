@@ -19,8 +19,8 @@ const isOptionType = (option: SelectOption): option is OptionType => {
 };
 
 interface CustomSelectInputProps {
-  value: string | string[] | Assignee[];
-  onChange: (selected: string | string[] | Assignee[]) => void;
+  value: string | string[] | Assignee[] | number;
+  onChange: (selected: string | string[] | Assignee[] | number) => void;
   options: OptionType[] | Assignee[];
   isMulti?: boolean;
   placeholder?: string;

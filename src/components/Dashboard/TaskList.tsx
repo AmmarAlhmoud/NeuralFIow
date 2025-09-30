@@ -17,7 +17,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
 
   const columns = [
     { id: "todo", title: "To Do", color: "bg-green-500" },
-    { id: "inprogress", title: "In Progress", color: "bg-gray-400" },
+    { id: "in_progress", title: "In Progress", color: "bg-gray-400" },
     { id: "done", title: "Done", color: "bg-cyan-500" },
   ];
 
@@ -42,7 +42,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   if (tasks !== undefined && tasks?.length > 0) {
     tasksList = (
       <HoverDisabler>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-109 max-h-109 overflow-y-scroll custom-scrollbar mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-109 max-h-109 overflow-y-scroll custom-scrollbar mt-8 px-2">
           {columns.map((column) => {
             const columnTasks = tasks.filter(
               (tasks) => tasks.status === column.id
@@ -74,6 +74,16 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
                 <div className="space-y-4">
                   {tasks
                     .filter((task) => task.status === column.id)
+                    .sort((a, b) => {
+                      const orderA = a.order ?? 6;
+                      const orderB = b.order ?? 6;
+
+                      // Tasks with order 6 always go last
+                      if (orderA === 6 && orderB !== 6) return 1;
+                      if (orderA !== 6 && orderB === 6) return -1;
+
+                      return orderA - orderB; // ascending for others
+                    })
                     .map((task) => (
                       <TaskCard key={task._id} task={task} />
                     ))}

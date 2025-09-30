@@ -8,6 +8,7 @@ interface AppState {
   isTaskModal: boolean | null;
   clickTask: Task | null;
   isTaskDrawer: boolean | null;
+  isConfirmationModal: boolean | null;
 }
 
 const initialState: AppState = {
@@ -17,6 +18,7 @@ const initialState: AppState = {
   isTaskModal: null,
   clickTask: null,
   isTaskDrawer: null,
+  isConfirmationModal: null,
 };
 
 const appSlice = createSlice({
@@ -48,6 +50,9 @@ const appSlice = createSlice({
     },
     setTaskDrawer(state, action: PayloadAction<boolean>) {
       state.isTaskDrawer = action.payload;
+    },
+    setConfirmationModal(state, action: PayloadAction<boolean>) {
+      state.isConfirmationModal = action.payload;
     },
   },
 });

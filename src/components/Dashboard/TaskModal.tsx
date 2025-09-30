@@ -13,7 +13,7 @@ import { isAssigneeArray } from "../Utils/helperFuns";
 
 interface TaskModalProps {
   isOpen: boolean | null;
-  onSubmit: (formData: Task) => void;
+  onSubmit: (formData: Task, type: "create" | "update") => void;
   initialData?: Task | null;
 }
 
@@ -25,6 +25,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<Task>({
+    _id: initialData?._id || "",
     projectId: initialData?.projectId || "",
     title: initialData?.title || "",
     description: initialData?.description || "",
@@ -34,7 +35,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     dueDate: initialData?.dueDate,
     estimate: initialData?.estimate,
     tags: initialData?.tags || [],
-    order: initialData?.order || 0,
+    order: initialData?.order || 6,
     createdBy: initialData?.createdBy || "",
   });
 
@@ -60,7 +61,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       data = { ...data, assignees: assigneesIds };
     }
 
-    onSubmit(data);
+    console.log(data);
+
+    if (initialData) {
+      onSubmit(data, "update");
+      dispatch(appActions.setTaskModal(false));
+      return;
+    }
+
+    onSubmit(data, "create");
     dispatch(appActions.setTaskModal(false));
   };
 
@@ -88,6 +97,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     { value: "done", label: "Done" },
   ];
 
+  const orderOptions = [
+    { value: "6", label: "Default" },
+    { value: "1", label: "First" },
+    { value: "2", label: "Second" },
+    { value: "3", label: "Third" },
+    { value: "4", label: "Fourth" },
+    { value: "5", label: "Fifth" },
+  ];
+
   const assigneeOptions: Assignee[] = [
     {
       _id: "assignee1",
@@ -105,10 +123,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="flex flex-col glassmorphic rounded-2xl p-6 max-w-md w-full neon-glow animate-fade-in relative">
+      <div className="flex flex-col glassmorphic rounded-2xl py-5 px-8 max-w-lg w-full neon-glow animate-fade-in relative">
         <X
           className="text-dark dark:text-white w-5 h-5 absolute top-4 right-4 cursor-pointer hover:scale-110 transition-transform duration-100 ease-in-out"
-          onClick={() => dispatch(appActions.setTaskModal(false))}
+          onClick={() => {
+            dispatch(appActions.setTaskModal(false));
+            dispatch(appActions.setClickTask(null));
+          }}
         />
         <h3 className="text-2xl text-center font-semibold dark:text-white text-dark mb-4">
           {initialData ? "Edit Task" : "Create Task"}
@@ -185,6 +206,25 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 isMulti={false}
               />
             </div>
+            <div className="flex-1">
+              <label
+                className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+                title="Status (Mandatory)"
+              >
+                Order
+              </label>
+              <CustomSelectInput
+                value={formData.order.toString() || "6"}
+                onChange={(v) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    order: +v as number,
+                  }))
+                }
+                options={orderOptions}
+                isMulti={false}
+              />
+            </div>
           </div>
 
           <label
@@ -201,6 +241,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               }
               options={tagOptions}
               isMulti={true}
+              placeholder="Select tags..."
             />
           </div>
 
