@@ -12,6 +12,7 @@ import Profile from "./Profile";
 import { useAuthContext } from "../../hooks/useAuth";
 import { Button } from "../ui/Button";
 import WorkspaceItem from "./WorkspaceItem";
+import Loading from "../ui/Loading";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -47,20 +48,30 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   let workspacesList: React.ReactNode;
 
+  if (workspaces === undefined) {
+    workspacesList = (
+      <div className="my-10">
+        <Loading />
+      </div>
+    );
+  }
+
   if (workspaces?.length === 0) {
     workspacesList = (
       <div className="text-sm text-gray-500">No workspaces available</div>
     );
   }
 
-  if (workspaces?.length > 0) {
-    workspacesList = workspaces.map((workspace) => (
-      <WorkspaceItem
-        key={workspace._id}
-        workspace={workspace}
-        currentPage={currentPage}
-      />
-    ));
+  if (workspaces !== undefined) {
+    if (workspaces!.length > 0) {
+      workspacesList = workspaces.map((workspace) => (
+        <WorkspaceItem
+          key={workspace._id}
+          workspace={workspace}
+          currentPage={currentPage}
+        />
+      ));
+    }
   }
 
   return (

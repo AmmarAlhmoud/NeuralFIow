@@ -45,7 +45,7 @@ const MainPage: React.FC = () => {
   };
 
   const currentPage: PageType = getCurrentPage();
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>();
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 

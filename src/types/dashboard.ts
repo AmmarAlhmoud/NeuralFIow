@@ -1,15 +1,6 @@
 import type { AuthUser } from "./auth";
 import type { Workspace } from "./workspace";
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar: string;
-  isOnline: boolean;
-}
-
 export type PageType =
   | "home"
   | "dashboard"
@@ -37,7 +28,7 @@ export interface SidebarProps {
   currentPage: PageType;
   onPageChange: (page: PageType) => void;
   onToggle: () => void;
-  workspaces: Workspace[];
+  workspaces: Workspace[] | undefined;
   setWorkspacesModal: (status: boolean) => void;
 }
 
