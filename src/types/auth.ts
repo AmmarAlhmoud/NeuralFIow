@@ -31,6 +31,7 @@ export interface AuthUser {
   email: string | null;
   name: string | null;
   avatarURL: string | null;
+  position?: string;
 }
 
 export interface AuthContextType {

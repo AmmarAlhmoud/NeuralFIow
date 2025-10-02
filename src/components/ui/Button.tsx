@@ -1,6 +1,6 @@
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "social" | "gradient";
-  size?: "sm" | "md" | "lg" | "lg-full";
+  size?: "sm" | "md" | "md-full" | "lg" | "lg-full";
   isLoading?: boolean;
   children: React.ReactNode;
 }
@@ -17,6 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
   const sizeClasses: Record<string, string> = {
     sm: "px-4 py-2 text-sm rounded-lg",
     md: "px-6 py-3 text-base rounded-xl",
+    "md-full": "px-6 py-3 text-base rounded-xl w-full",
     lg: "px-6 py-3 text-lg rounded-2xl",
     "lg-full": "px-6 py-3 text-lg rounded-2xl w-full",
   };

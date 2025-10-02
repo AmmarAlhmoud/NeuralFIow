@@ -1,18 +1,27 @@
+import type { AuthUser } from "./auth";
+
 export interface Workspace {
   _id?: string;
   name: string;
   description?: string;
   ownerId?: string;
   color?: string;
-  members?: WorkspaceMember[];
+  members?: TeamMember[];
   settings?: WorkspaceSettings;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface WorkspaceMember {
-  uid: string;
-  role?: "admin" | "manager" | "member" | "viewer";
+export interface TeamMember {
+  _id?: string;
+  uid?: AuthUser;
+  name?: string;
+  email: string;
+  role: string;
+  avatarUrl?: string;
+  joinedAt?: string;
+  position?: string;
+  isOnline?: boolean;
 }
 
 export interface WorkspaceSettings {
@@ -71,4 +80,3 @@ export interface Assignee {
   email: string;
   avatarUrl: string;
 }
-

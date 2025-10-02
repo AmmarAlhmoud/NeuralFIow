@@ -9,6 +9,7 @@ interface AppState {
   clickTask: Task | null;
   isTaskDrawer: boolean | null;
   isConfirmationModal: boolean | null;
+  isInviteMembersModal: boolean | null;
 }
 
 const initialState: AppState = {
@@ -19,6 +20,7 @@ const initialState: AppState = {
   clickTask: null,
   isTaskDrawer: null,
   isConfirmationModal: null,
+  isInviteMembersModal: null,
 };
 
 const appSlice = createSlice({
@@ -53,6 +55,9 @@ const appSlice = createSlice({
     },
     setConfirmationModal(state, action: PayloadAction<boolean>) {
       state.isConfirmationModal = action.payload;
+    },
+    setInviteMembersModal(state, action: PayloadAction<boolean>) {
+      state.isInviteMembersModal = action.payload;
     },
   },
 });

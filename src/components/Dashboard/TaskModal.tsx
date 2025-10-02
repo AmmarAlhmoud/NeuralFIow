@@ -75,6 +75,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   if (!isOpen) return null;
 
+  // TODO: Increase the number of tags
   // Options
   const tagOptions = [
     { value: "Research", label: "Research" },
