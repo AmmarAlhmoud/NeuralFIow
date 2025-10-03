@@ -11,18 +11,21 @@ import { CustomSelectInput } from "../ui/CustomSelectInput";
 
 interface InviteMembersModalProps {
   isOpen: boolean | null;
-  onSubmit: (formData: TeamMember) => void;
+  onSubmit: (formData: TeamMember, type: "create" | "update") => void;
+  initialData?: TeamMember | null;
 }
 
 export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
   isOpen,
   onSubmit,
+  initialData,
 }) => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<TeamMember>({
-    email: "",
-    role: "member",
+    _id: initialData?._id || "",
+    email: initialData?.uid?.email || "",
+    role: initialData?.role || "member",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,9 +43,13 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
       return;
     }
 
-    console.log(data);
+    if (initialData) {
+      onSubmit(data, "update");
+      dispatch(appActions.setInviteMembersModal(false));
+      return;
+    }
 
-    onSubmit(data);
+    onSubmit(data, "create");
     dispatch(appActions.setInviteMembersModal(false));
   };
 
@@ -53,7 +60,6 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
     { value: "viewer", label: "Viewer" },
     { value: "member", label: "Member" },
     { value: "manager", label: "Manager" },
-    { value: "admin", label: "Admin" },
   ];
 
   return createPortal(
@@ -63,10 +69,11 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
           className="text-dark dark:text-white w-5 h-5 absolute top-4 right-4 cursor-pointer hover:scale-110 transition-transform duration-100 ease-in-out"
           onClick={() => {
             dispatch(appActions.setInviteMembersModal(false));
+            dispatch(appActions.setClickTeamMember(null));
           }}
         />
         <h3 className="text-2xl text-center font-semibold dark:text-white text-dark mb-4">
-          Invite Team Member
+          {initialData ? "Edit Team Member" : "Invite Team Member"}
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -99,7 +106,7 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
                 onChange={(v) =>
                   setFormData((prev) => ({
                     ...prev,
-                    role: v as "admin" | "manager" | "member" | "viewer",
+                    role: v as "manager" | "member" | "viewer",
                   }))
                 }
                 options={roleOptions}
@@ -109,7 +116,7 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
           </div>
 
           <Button type="submit" size="lg-full">
-            Invite Team Member
+            {initialData ? "Edit Team Member" : "Invite Team Member"}
           </Button>
         </form>
       </div>
