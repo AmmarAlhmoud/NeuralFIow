@@ -119,7 +119,6 @@ const ProjectPage: React.FC = () => {
           }
         );
         const data = await res.json();
-        console.log(data);
         setTasks(data.data);
       } catch (error) {
         console.error("Error fetching workspaces:", error);

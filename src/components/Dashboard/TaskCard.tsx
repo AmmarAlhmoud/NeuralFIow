@@ -4,7 +4,7 @@ import { isAssigneeArray } from "../Utils/helperFuns";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
-import { EllipsisVertical, Trash, Pencil } from "lucide-react";
+import { Menu, Trash, Pencil } from "lucide-react";
 export interface TaskCardProps {
   task: Task;
 }
@@ -98,16 +98,16 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
           className={`absolute bottom-2 right-2 w-3 h-3 rounded-full ${priorityColor}`}
           title={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
         ></div>
-        <EllipsisVertical
+        <Menu
           onClick={(e) => {
             e.stopPropagation();
             setIsMenu((prev) => !prev);
           }}
-          className="absolute z-20 top-2 right-0.5 text-black dark:text-white cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out"
+          className="absolute h-5 w-5 z-20 top-2 right-2 text-black dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
         />
 
         {isMenu && (
-          <ul className="absolute top-5 right-5 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in">
+          <ul className="absolute top-6 right-7 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in">
             <li
               onClick={(e) => {
                 e.stopPropagation();
