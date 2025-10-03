@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
+import { TimezoneProvider } from "./context/TimezoneProvider";
 import { onAuthStateChanged } from "firebase/auth";
 import { Toaster } from "react-hot-toast";
 import { X, Check } from "lucide-react";
@@ -152,24 +153,26 @@ const App: React.FC = () => {
         logout: logoutHandler,
       }}
     >
-      <RouterProvider router={router} />
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          className: "rounded-2xl shadow-xl h-14",
-          style: {
-            background:
-              "linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23)",
-            color: "#fff",
-          },
-          success: {
-            icon: <Check className="h-5 w-5 text-green-600" />,
-          },
-          error: {
-            icon: <X className="h-5 w-5 text-red-600" />,
-          },
-        }}
-      />
+      <TimezoneProvider>
+        <RouterProvider router={router} />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            className: "rounded-2xl shadow-xl h-14",
+            style: {
+              background:
+                "linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23)",
+              color: "#fff",
+            },
+            success: {
+              icon: <Check className="h-5 w-5 text-green-600" />,
+            },
+            error: {
+              icon: <X className="h-5 w-5 text-red-600" />,
+            },
+          }}
+        />
+      </TimezoneProvider>
     </AuthProvider>
   );
 };
