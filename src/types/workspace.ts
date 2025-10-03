@@ -1,4 +1,4 @@
-import type { AuthUser } from "./auth";
+import type { AuthUser, Role } from "./auth";
 
 export interface Workspace {
   _id?: string;
@@ -7,7 +7,7 @@ export interface Workspace {
   ownerId?: string;
   color?: string;
   members?: TeamMember[];
-  settings?: WorkspaceSettings;
+  settings?: WorkspaceFormSettings;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,16 +17,18 @@ export interface TeamMember {
   uid?: AuthUser;
   name?: string;
   email: string;
-  role: string;
+  role: Role;
   avatarUrl?: string;
   joinedAt?: string;
   position?: string;
   isOnline?: boolean;
 }
 
-export interface WorkspaceSettings {
+export interface WorkspaceFormSettings {
+  name?: string;
+  aiModel?: string;
   allowInvites?: boolean;
-  isPublic?: boolean;
+  timezone?: string;
 }
 
 export interface Project {

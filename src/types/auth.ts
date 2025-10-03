@@ -41,3 +41,5 @@ export interface AuthContextType {
   handleAuthUser: (firebaseUser: AuthUser) => void;
   logout: () => Promise<void>;
 }
+
+export type Role = "admin" | "manager" | "member" | "viewer";
