@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useLocation,
+  useNavigate,
+  redirect,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
@@ -157,10 +162,22 @@ const MainPage: React.FC = () => {
       getWorkspaces();
     }
 
+    if (workspaces?.length === 0) {
+      navigate("/");
+    }
+
     if (user && workspaceId) {
       getProjects();
     }
-  }, [user, workspacesData, projectData, workspaceId, dispatch]);
+  }, [
+    user,
+    workspacesData,
+    projectData,
+    workspaceId,
+    dispatch,
+    workspaces?.length,
+    navigate,
+  ]);
 
   return (
     <div className="min-h-screen relative overflow-x-hidden transition-all duration-500 text-gray-900 dark:text-gray-100">
