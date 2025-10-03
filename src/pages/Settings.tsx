@@ -5,8 +5,12 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "../hooks/useAuth";
 import Settings from "../components/Settings/Settings";
 import { InviteMembersModal } from "../components/Settings/InviteMembersModal";
-import type { TeamMember, Workspace } from "../types/workspace";
+import type {
+  TeamMember,
+  Workspace,
+} from "../types/workspace";
 import type { AppDispatch, RootState } from "../store/store";
+import { ConfirmationModal } from "../components/ui/ConfirmationModal";
 import { appActions } from "../store/appSlice";
 
 const SettingsPage: React.FC = () => {
@@ -14,20 +18,54 @@ const SettingsPage: React.FC = () => {
   const { workspaceId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const [workspace, setWorkspace] = useState<Workspace | undefined>();
+  const [deleteAction, setDeleteAction] = useState<boolean>(false);
+  const [updateTeamMemberData, setUpdateTeamMemberData] =
+    useState<TeamMember | null>(null);
 
+  const [workspace, setWorkspace] = useState<Workspace | undefined>();
+  const workspaceSettings = useSelector(
+    (state: RootState) => state.app.workspaceSettings
+  );
+
+  const clickTeamMember = useSelector(
+    (state: RootState) => state.app.clickTeamMember
+  );
   const isInviteMembersModal = useSelector(
     (state: RootState) => state.app.isInviteMembersModal
   );
   const [invitedMember, setInvitedMember] = useState<TeamMember | null>();
+  const isConfirmationModal = useSelector(
+    (state: RootState) => state.app.isConfirmationModal
+  );
 
-  const inviteTeamMemberHandler = (formData: TeamMember) => {
+  const teamMemberHandler = (
+    formData: TeamMember,
+    type: "create" | "update"
+  ) => {
     if (!user) {
       toast.error("Failed to invite team member try again");
       return;
     }
 
-    setInvitedMember(formData);
+    let data: TeamMember;
+
+    if (workspaceId && type === "create") {
+      data = { ...formData };
+      setInvitedMember(formData);
+      return;
+    }
+
+    if (workspaceId && type === "update") {
+      data = { ...formData };
+      setUpdateTeamMemberData(data);
+      return;
+    }
+
+    if (workspaceId && type === "create") {
+      toast.error("Failed to invite team member. Please try again.");
+    } else {
+      toast.error("Failed to update team member. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -40,7 +78,6 @@ const SettingsPage: React.FC = () => {
           }
         );
         const data = await res.json();
-        console.log(data);
         setWorkspace(data.data);
       } catch (error) {
         console.error("Error fetching workspace:", error);
@@ -66,60 +103,104 @@ const SettingsPage: React.FC = () => {
           toast.success("Invitation sent successfully!");
         }
         if (res.status === 400 || res.status === 404) {
-          toast.error(data.message);
+          if (data.errors) {
+            toast.error(data?.errors[0].message);
+          } else {
+            toast.error(data.message);
+          }
         }
       } catch (_) {
         toast.error("Failed to send invitation. Please try again.");
       }
     };
-    // const updateTeamMember = async (member: TeamMember) => {
-    //   try {
-    //     await fetch(
-    //       `${import.meta.env.VITE_API_URL}/tasks/${
-    //         member._id
-    //       }?workspaceId=${workspaceId}`,
-    //       {
-    //         method: "PATCH",
-    //         credentials: "include",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(member),
-    //       }
-    //     );
-    //     dispatch(appActions.setClickTask(null));
-    //     toast.success("Member updated successfully!");
-    //   } catch (_) {
-    //     toast.error("Failed to update member. Please try again.");
-    //   }
-    // };
-    // const removeTeamMember = async (member: TeamMember) => {
-    //   try {
-    //     await fetch(
-    //       `${import.meta.env.VITE_API_URL}/tasks/${
-    //         member._id
-    //       }?workspaceId=${workspaceId}`,
-    //       {
-    //         method: "DELETE",
-    //         credentials: "include",
-    //       }
-    //     );
-    //     dispatch(appActions.setClickTask(null));
-    //     toast.success("Task deleted successfully!");
-    //   } catch (_) {
-    //     toast.error("Failed to deleted Task. Please try again.");
-    //   }
-    // };
+    const updateTeamMember = async (member: TeamMember) => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}/members/${
+            member._id
+          }`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(member),
+          }
+        );
+
+        const data = await res.json();
+        console.log(data);
+        if (res.status === 400 || res.status === 403 || res.status === 404) {
+          if (data.errors) {
+            toast.error(data?.errors[0].message);
+          } else {
+            toast.error(data.message);
+          }
+        }
+        if (res.status === 200) {
+          toast.success("Member updated successfully!");
+        }
+        dispatch(appActions.setClickTeamMember(null));
+      } catch (_) {
+        toast.error("Failed to update member. Please try again.");
+      }
+    };
+    const removeTeamMember = async (member: TeamMember) => {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}/members/${
+            member._id
+          }`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        dispatch(appActions.setClickTask(null));
+        toast.success("Member removed successfully!");
+      } catch (_) {
+        toast.error("Failed to remove member. Please try again.");
+      }
+    };
 
     if (invitedMember) {
       sendInvite(invitedMember);
       setInvitedMember(null);
     }
 
+    if (updateTeamMemberData) {
+      updateTeamMember(updateTeamMemberData);
+      setUpdateTeamMemberData(null);
+    }
+
+    if (clickTeamMember && deleteAction) {
+      removeTeamMember(clickTeamMember);
+      setDeleteAction(false);
+    }
+
+    if (workspaceSettings) {
+      if (!user) {
+        toast.error("Failed to save workspace settings. please try again.");
+      } else {
+        // TODO: add workspace settigns API call
+        dispatch(appActions.setWorkspaceSettings(null));
+      }
+    }
+
     if (user) {
       getWorkspaceTeamMembers();
     }
-  }, [dispatch, invitedMember, user, workspaceId]);
+  }, [
+    clickTeamMember,
+    deleteAction,
+    dispatch,
+    invitedMember,
+    updateTeamMemberData,
+    user,
+    workspaceId,
+    workspaceSettings,
+  ]);
 
   return (
     <>
@@ -127,7 +208,17 @@ const SettingsPage: React.FC = () => {
       {isInviteMembersModal && (
         <InviteMembersModal
           isOpen={isInviteMembersModal}
-          onSubmit={inviteTeamMemberHandler}
+          onSubmit={teamMemberHandler}
+          initialData={clickTeamMember}
+        />
+      )}
+      {isConfirmationModal && (
+        <ConfirmationModal
+          isOpen={isConfirmationModal}
+          action={() => setDeleteAction(true)}
+          title={"Confirmation"}
+          message={"Are you sure you want to remove this team member?"}
+          type="team"
         />
       )}
     </>
