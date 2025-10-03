@@ -1,5 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type Project, type Task } from "../types/workspace";
+import {
+  type Project,
+  type Task,
+  type TeamMember,
+  type WorkspaceFormSettings,
+} from "../types/workspace";
 
 interface AppState {
   isDarkMode: boolean;
@@ -10,6 +15,8 @@ interface AppState {
   isTaskDrawer: boolean | null;
   isConfirmationModal: boolean | null;
   isInviteMembersModal: boolean | null;
+  clickTeamMember: TeamMember | null;
+  workspaceSettings: WorkspaceFormSettings | null;
 }
 
 const initialState: AppState = {
@@ -21,6 +28,8 @@ const initialState: AppState = {
   isTaskDrawer: null,
   isConfirmationModal: null,
   isInviteMembersModal: null,
+  clickTeamMember: null,
+  workspaceSettings: null,
 };
 
 const appSlice = createSlice({
@@ -58,6 +67,15 @@ const appSlice = createSlice({
     },
     setInviteMembersModal(state, action: PayloadAction<boolean>) {
       state.isInviteMembersModal = action.payload;
+    },
+    setClickTeamMember(state, action: PayloadAction<TeamMember | null>) {
+      state.clickTeamMember = action.payload;
+    },
+    setWorkspaceSettings(
+      state,
+      action: PayloadAction<WorkspaceFormSettings | null>
+    ) {
+      state.workspaceSettings = action.payload;
     },
   },
 });

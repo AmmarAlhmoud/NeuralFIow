@@ -40,6 +40,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               if (type === "task") {
                 dispatch(appActions.setClickTask(null));
               }
+              if (type === "team") {
+                dispatch(appActions.setClickTeamMember(null));
+              }
               dispatch(appActions.setConfirmationModal(false));
             }}
             variant="social"
@@ -50,13 +53,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <Button
             onClick={() => {
               action();
-              if (type === "task") {
-                dispatch(appActions.setConfirmationModal(false));
-              }
+              dispatch(appActions.setConfirmationModal(false));
             }}
             className="px-6 py-2"
           >
-            Delete
+            {type === "task" ? "Delete" : "Remove"}
           </Button>
         </div>
       </div>
