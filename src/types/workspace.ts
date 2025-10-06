@@ -31,6 +31,13 @@ export interface WorkspaceFormSettings {
   timezone?: string;
 }
 
+export interface UserProfileSettings {
+  _id: string;
+  name: string;
+  email: string;
+  position?: string | undefined;
+}
+
 export interface Project {
   _id?: string;
   workspaceId: string;
@@ -55,7 +62,7 @@ export interface Task {
   assignees: Assignee[] | string[];
   priority: "low" | "medium" | "high" | "critical";
   status: "todo" | "in_progress" | "done";
-  dueDate?: Date;
+  dueDate?: Date | null;
   estimate?: number;
   tags: string[];
   attachments?: {
@@ -80,5 +87,5 @@ export interface Assignee {
   _id?: string;
   name: string;
   email: string;
-  avatarUrl: string;
+  avatarURL: string;
 }

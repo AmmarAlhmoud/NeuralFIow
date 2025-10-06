@@ -43,6 +43,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               if (type === "team") {
                 dispatch(appActions.setClickTeamMember(null));
               }
+              if (type === "workspace") {
+                dispatch(appActions.setDeletedWorkspaceId(null));
+              }
               dispatch(appActions.setConfirmationModal(false));
             }}
             variant="social"
@@ -57,7 +60,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             }}
             className="px-6 py-2"
           >
-            {type === "task" ? "Delete" : "Remove"}
+            {type === "task" || type === "workspace" ? "Delete" : "Remove"}
           </Button>
         </div>
       </div>

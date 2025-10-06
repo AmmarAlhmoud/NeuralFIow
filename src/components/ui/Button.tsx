@@ -1,5 +1,5 @@
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "social" | "gradient";
+  variant?: "primary" | "social" | "gradient" | "warning";
   size?: "sm" | "md" | "md-full" | "lg" | "lg-full";
   isLoading?: boolean;
   children: React.ReactNode;
@@ -32,6 +32,8 @@ export const Button: React.FC<ButtonProps> = ({
       "dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 dark:text-white text-black font-medium dark:hover:bg-white/10 hover:bg-black/10 hover:neon-glow-cyan flex items-center justify-center space-x-3",
     gradient:
       "relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg group",
+    warning:
+      "bg-gradient-to-r from-red-500 to-neon-scarlet dark:text-white text-black hover:shadow-lg hover:shadow-neon-fuchsia/25",
   };
 
   return (

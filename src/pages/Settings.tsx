@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../hooks/useAuth";
@@ -8,6 +8,7 @@ import { InviteMembersModal } from "../components/Settings/InviteMembersModal";
 import type {
   TeamMember,
   Workspace,
+  WorkspaceFormSettings,
 } from "../types/workspace";
 import type { AppDispatch, RootState } from "../store/store";
 import { ConfirmationModal } from "../components/ui/ConfirmationModal";
@@ -17,14 +18,20 @@ const SettingsPage: React.FC = () => {
   const { user } = useAuthContext();
   const { workspaceId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [deleteAction, setDeleteAction] = useState<boolean>(false);
+  const [deleteWorkspaceAction, setDeleteWorkspaceAction] =
+    useState<boolean>(false);
   const [updateTeamMemberData, setUpdateTeamMemberData] =
     useState<TeamMember | null>(null);
 
   const [workspace, setWorkspace] = useState<Workspace | undefined>();
   const workspaceSettings = useSelector(
     (state: RootState) => state.app.workspaceSettings
+  );
+  const deletedWorkspaceId = useSelector(
+    (state: RootState) => state.app.deletedWorkspaceId
   );
 
   const clickTeamMember = useSelector(
@@ -37,6 +44,8 @@ const SettingsPage: React.FC = () => {
   const isConfirmationModal = useSelector(
     (state: RootState) => state.app.isConfirmationModal
   );
+
+  const userProfile = useSelector((state: RootState) => state.app.userProfile);
 
   const teamMemberHandler = (
     formData: TeamMember,
@@ -130,7 +139,6 @@ const SettingsPage: React.FC = () => {
         );
 
         const data = await res.json();
-        console.log(data);
         if (res.status === 400 || res.status === 403 || res.status === 404) {
           if (data.errors) {
             toast.error(data?.errors[0].message);
@@ -163,6 +171,56 @@ const SettingsPage: React.FC = () => {
         toast.error("Failed to remove member. Please try again.");
       }
     };
+    const updateWorkspaceSettings = async (settings: WorkspaceFormSettings) => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(settings),
+          }
+        );
+
+        const data = await res.json();
+        if (res.status === 400 || res.status === 403 || res.status === 404) {
+          if (data.errors) {
+            toast.error(data?.errors[0].message);
+          } else {
+            toast.error(data.message);
+          }
+        }
+        if (res.status === 200) {
+          toast.success("Workspace settings updated successfully!");
+        }
+        dispatch(appActions.setWorkspaceSettings(null));
+      } catch (_) {
+        toast.error("Failed to update workspace settings. Please try again.");
+      }
+    };
+    const deleteWorkspace = async (workspaceId: string) => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        dispatch(appActions.setDeletedWorkspaceId(null));
+        if (res.status === 204) {
+          toast.success("Workspace deleted successfully!");
+          navigate("/");
+        } else {
+          toast.error("Failed to delete workspace. Please try again.");
+        }
+      } catch (_) {
+        toast.error("Failed to delete workspace. Please try again.");
+      }
+    };
 
     if (invitedMember) {
       sendInvite(invitedMember);
@@ -183,9 +241,18 @@ const SettingsPage: React.FC = () => {
       if (!user) {
         toast.error("Failed to save workspace settings. please try again.");
       } else {
-        // TODO: add workspace settigns API call
-        dispatch(appActions.setWorkspaceSettings(null));
+        updateWorkspaceSettings(workspaceSettings);
       }
+    }
+
+    if (userProfile) {
+      console.log(userProfile);
+      dispatch(appActions.setUserProfile(null));
+    }
+
+    if (deletedWorkspaceId && deleteWorkspaceAction) {
+      deleteWorkspace(deletedWorkspaceId);
+      setDeleteWorkspaceAction(false);
     }
 
     if (user) {
@@ -194,10 +261,14 @@ const SettingsPage: React.FC = () => {
   }, [
     clickTeamMember,
     deleteAction,
+    deleteWorkspaceAction,
+    deletedWorkspaceId,
     dispatch,
     invitedMember,
+    navigate,
     updateTeamMemberData,
     user,
+    userProfile,
     workspaceId,
     workspaceSettings,
   ]);
@@ -212,13 +283,22 @@ const SettingsPage: React.FC = () => {
           initialData={clickTeamMember}
         />
       )}
-      {isConfirmationModal && (
+      {isConfirmationModal && !deletedWorkspaceId && (
         <ConfirmationModal
           isOpen={isConfirmationModal}
           action={() => setDeleteAction(true)}
           title={"Confirmation"}
           message={"Are you sure you want to remove this team member?"}
           type="team"
+        />
+      )}
+      {isConfirmationModal && deletedWorkspaceId && (
+        <ConfirmationModal
+          isOpen={isConfirmationModal}
+          action={() => setDeleteWorkspaceAction(true)}
+          title={"Confirmation"}
+          message={"Are you sure you want to delete this workspace?"}
+          type="workspace"
         />
       )}
     </>

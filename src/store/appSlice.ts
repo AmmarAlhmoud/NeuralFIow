@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
+  type UserProfileSettings,
   type Project,
   type Task,
   type TeamMember,
@@ -17,6 +18,8 @@ interface AppState {
   isInviteMembersModal: boolean | null;
   clickTeamMember: TeamMember | null;
   workspaceSettings: WorkspaceFormSettings | null;
+  deletedWorkspaceId: string | null;
+  userProfile: UserProfileSettings | null;
 }
 
 const initialState: AppState = {
@@ -30,6 +33,8 @@ const initialState: AppState = {
   isInviteMembersModal: null,
   clickTeamMember: null,
   workspaceSettings: null,
+  deletedWorkspaceId: null,
+  userProfile: null,
 };
 
 const appSlice = createSlice({
@@ -76,6 +81,12 @@ const appSlice = createSlice({
       action: PayloadAction<WorkspaceFormSettings | null>
     ) {
       state.workspaceSettings = action.payload;
+    },
+    setDeletedWorkspaceId(state, action: PayloadAction<string | null>) {
+      state.deletedWorkspaceId = action.payload;
+    },
+    setUserProfile(state, action: PayloadAction<UserProfileSettings | null>) {
+      state.userProfile = action.payload;
     },
   },
 });

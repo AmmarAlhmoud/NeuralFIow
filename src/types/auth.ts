@@ -27,11 +27,13 @@ export interface AuthState {
 }
 
 export interface AuthUser {
+  _id?: string;
   uid: string;
   email: string | null;
   name: string | null;
   avatarURL: string | null;
   position?: string;
+  provider?: string;
 }
 
 export interface AuthContextType {

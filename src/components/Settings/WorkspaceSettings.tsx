@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
+import TimezoneSelect from "../ui/TimezoneSelect";
 
 interface WorkspaceSettingsProps {
   initialData: Workspace | undefined;
@@ -20,7 +21,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
   const [formData, setFormData] = useState<WorkspaceFormSettings>({
     name: initialData?.name || "",
     aiModel: initialData?.settings?.aiModel || "Gemini",
-    allowInvites: initialData?.settings?.allowInvites || true,
+    allowInvites: initialData?.settings?.allowInvites ?? true,
     timezone: initialData?.settings?.timezone || timezone,
   });
 
@@ -74,33 +75,43 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Time Zone
           </label>
-          <select
-            name="timezone"
-            value={formData.timezone}
-            onChange={handleChange}
-            className="w-full px-4 py-3 bg-white/5 dark:bg-gray-800/80 border border-black/10 dark:border-gray-700/70 rounded-xl text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#b74fd6]/50 dark:focus:ring-[#d64f4f]/50 backdrop-blur-sm input-glow transition-all"
-          >
-            <option value="America/Los_Angeles">Pacific (UTC-8)</option>
-            <option value="America/New_York">Eastern (UTC-5)</option>
-            <option value="Etc/UTC">GMT (UTC+0)</option>
-            <option value="Europe/Berlin">CET (UTC+1)</option>
-            <option value="Europe/Istanbul">Istanbul (UTC+3)</option>
-            <option value="Asia/Tokyo">Tokyo (UTC+9)</option>
-          </select>
+          <TimezoneSelect
+            timezone={formData.timezone || timezone}
+            handleChange={handleChange}
+          />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             AI Model
           </label>
-          <select
-            name="aiModel"
-            value={formData.aiModel}
-            onChange={handleChange}
-            className="w-full px-4 py-3 bg-white/5 dark:bg-gray-800/80 border border-black/10 dark:border-gray-700/70 rounded-xl text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#b74fd6]/50 dark:focus:ring-[#d64f4f]/50 backdrop-blur-sm input-glow transition-all"
-          >
-            <option value="Gemini">Gemini</option>
-          </select>
+          <div className="relative w-full">
+            <select
+              name="aiModel"
+              value={formData.aiModel}
+              onChange={handleChange}
+              className="w-full appearance-none pr-10 px-4 py-3 bg-white/5 dark:bg-gray-800/80 border border-black/10 dark:border-gray-700/70 rounded-xl text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#b74fd6]/50 dark:focus:ring-[#d64f4f]/50 backdrop-blur-sm input-glow transition-all"
+            >
+              <option value="Gemini">Gemini</option>
+            </select>
+
+            {/* Dropdown arrow icon */}
+            <div className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center">
+              <svg
+                className="w-3 h-3 text-dark dark:text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
 
         <div className="mt-5">
@@ -138,6 +149,20 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
 
       <Button type="submit" variant="primary" size="md-full" className="mt-6">
         Save Workspace
+      </Button>
+      <Button
+        type="button"
+        variant="warning"
+        size="md-full"
+        className="mt-6"
+        onClick={() => {
+          if (initialData?._id) {
+            dispatch(appActions.setDeletedWorkspaceId(initialData._id));
+            dispatch(appActions.setConfirmationModal(true));
+          }
+        }}
+      >
+        Delete Workspace
       </Button>
     </form>
   );

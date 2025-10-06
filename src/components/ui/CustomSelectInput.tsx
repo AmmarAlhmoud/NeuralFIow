@@ -113,9 +113,9 @@ export const CustomSelectInput: React.FC<CustomSelectInputProps> = ({
               if (isAssignee(option)) {
                 return (
                   <div className="flex items-center gap-2">
-                    {option.avatarUrl ? (
+                    {option.avatarURL ? (
                       <img
-                        src={option.avatarUrl}
+                        src={option.avatarURL}
                         alt={option.name}
                         className="w-6 h-6 rounded-full object-cover"
                       />

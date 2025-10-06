@@ -5,7 +5,8 @@ import { TimezoneContext } from "./TimezoneContext";
 export const TimezoneProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [timezone, setTimezone] = useState("Europe/Istanbul");
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const [timezone, setTimezone] = useState(userTimezone);
 
   const formatDate = (date: Date | string) => {
     const dt =
@@ -13,7 +14,8 @@ export const TimezoneProvider: React.FC<{ children: ReactNode }> = ({
         ? DateTime.fromISO(date)
         : DateTime.fromJSDate(date);
 
-    return dt.setZone(timezone).toFormat("yyyy-MM-dd HH:mm:ss ZZZZ");
+    if (!dt.isValid) return "Invalid date";
+    return dt.setZone(timezone).toFormat("yyyy LLL dd / HH:mm");
   };
 
   return (
