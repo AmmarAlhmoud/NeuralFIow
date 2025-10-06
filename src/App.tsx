@@ -88,6 +88,7 @@ const App: React.FC = () => {
           email: firebaseUser.email,
           name: firebaseUser.displayName,
           avatarURL: firebaseUser.photoURL,
+          provider: firebaseUser.providerData[0].providerId,
         };
         setUser(authUser);
       } else {
