@@ -38,7 +38,7 @@ const DashboardPage: React.FC = () => {
 
   if (projects !== undefined && projects?.length > 0) {
     projectsList = (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-134 max-h-134 overflow-y-scroll custom-scrollbar">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-134 max-h-134 overflow-y-auto custom-scrollbar">
         {columns.map((column) => {
           const columnProjects = projects.filter(
             (project) => project.status === column.id

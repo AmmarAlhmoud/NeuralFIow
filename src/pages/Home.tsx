@@ -5,7 +5,7 @@ import { Button } from "../components/ui/Button";
 import WorkspaceItem from "../components/Dashboard/WorkspaceItem";
 import type { PageType } from "../types/dashboard";
 import Loading from "../components/ui/Loading";
-import HoverDisabler from "../components/ui/hoverDisabler";
+import HoverDisabler from "../components/ui/HoverDisabler";
 
 interface HomePageProps {
   workspaces?: Workspace[];
@@ -68,7 +68,7 @@ const HomePage: React.FC<HomePageProps> = ({
             </Button>
           </div>
           <HoverDisabler>
-            <div className="h-full min-h-112 max-h-112 overflow-y-scroll custom-scrollbar mt-8">
+            <div className="h-full min-h-112 max-h-112 overflow-y-auto custom-scrollbar mt-8">
               {workspacesList}
             </div>
           </HoverDisabler>

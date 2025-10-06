@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { type Task } from "../types/workspace";
+import { type Task, type Workspace } from "../types/workspace";
 import TaskList from "../components/Dashboard/TaskList";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/store";
@@ -15,6 +15,8 @@ const ProjectPage: React.FC = () => {
   const { user } = useAuthContext();
   const dispatch = useDispatch();
   const { workspaceId, projectId } = useParams();
+
+  const [workspace, setWorkspace] = useState<Workspace | null>();
 
   const isTaskModal = useSelector((state: RootState) => state.app.isTaskModal);
   const selectedTask = useSelector((state: RootState) => state.app.clickTask);
@@ -181,6 +183,20 @@ const ProjectPage: React.FC = () => {
         toast.error("Failed to deleted Task. Please try again.");
       }
     };
+    const getWorkspace = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        setWorkspace(data.data);
+      } catch (error) {
+        console.error("Error fetching workspace:", error);
+      }
+    };
 
     if (taskData) {
       createTask(taskData);
@@ -199,6 +215,7 @@ const ProjectPage: React.FC = () => {
 
     if (user) {
       getTasks();
+      getWorkspace();
     }
   }, [
     user,
@@ -219,6 +236,7 @@ const ProjectPage: React.FC = () => {
           isOpen={isTaskModal}
           onSubmit={taskInfoHandler}
           initialData={selectedTask}
+          workspace={workspace || null}
         />
       )}
       {isTaskDrawer && <TaskDrawer task={selectedTask} isOpen={isTaskDrawer} />}
