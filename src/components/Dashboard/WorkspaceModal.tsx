@@ -68,8 +68,11 @@ export const WorkspaceModal: React.FC<WorkspaceModalProps> = ({
           Create Workspace
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6 ">
-          <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
-            Workspace name
+          <label
+            className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300"
+            title="Workspace Name (Mandatory)"
+          >
+            Workspace name <span className="text-red-500">*</span>
           </label>
           <Input
             type="name"
@@ -84,8 +87,11 @@ export const WorkspaceModal: React.FC<WorkspaceModalProps> = ({
             }
           />
 
-          <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
-            Workspace Description (Optional)
+          <label
+            className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300"
+            title="Workspace Description (Optional)"
+          >
+            Workspace Description
           </label>
           <Textarea
             className="min-h-[100px] mt-1"

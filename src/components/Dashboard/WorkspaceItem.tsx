@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { TextQuote } from "lucide-react";
 import type { Workspace } from "../../types/workspace";
 import type { PageType } from "../../types/dashboard";
@@ -26,6 +26,8 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     const darker = shadeColor(hex, -40); // -40 to darken
     return `linear-gradient(135deg, ${lighter}, ${darker})`;
   };
+
+  const { workspaceId } = useParams();
 
   let container: React.ReactNode;
   if (currentPage === "home") {
@@ -91,7 +93,11 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     <NavLink to={`/workspace/${workspace._id}`}>
       <div
         key={workspace._id}
-        className="will-change-transform will-change-shadow touch-none flex items-center space-x-3 p-3 rounded-lg hover:bg-white/5 cursor-pointer group transition-all"
+        className={`will-change-transform will-change-shadow touch-none flex items-center space-x-3 p-2.5 rounded-lg hover:bg-white/5 cursor-pointer group transition-all ${
+          workspace._id === workspaceId
+            ? "bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border border-violet-500/30 neon-glow"
+            : "dark:hover:bg-white/5 dark:hover:border-white/10 hover:bg-black/5 hover:border-black/10 border border-transparent"
+        }`}
       >
         {container}
       </div>
