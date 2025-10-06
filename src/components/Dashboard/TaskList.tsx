@@ -6,7 +6,7 @@ import { Button } from "../ui/Button";
 import Loading from "../ui/Loading";
 import { useDispatch } from "react-redux";
 import { appActions } from "../../store/appSlice";
-import HoverDisabler from "../ui/hoverDisabler";
+import HoverDisabler from "../ui/HoverDisabler";
 
 interface TaskListProps {
   tasks: Task[] | undefined;
@@ -42,7 +42,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   if (tasks !== undefined && tasks?.length > 0) {
     tasksList = (
       <HoverDisabler>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-109 max-h-109 overflow-y-scroll custom-scrollbar mt-8 px-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-109 max-h-109 overflow-y-auto custom-scrollbar mt-8 px-2">
           {columns.map((column) => {
             const columnTasks = tasks.filter(
               (tasks) => tasks.status === column.id

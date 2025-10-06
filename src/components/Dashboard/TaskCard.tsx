@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
 import { Menu, Trash, Pencil } from "lucide-react";
+import useTimezone from "../../hooks/useTimezone";
 export interface TaskCardProps {
   task: Task;
 }
@@ -24,6 +25,7 @@ const getPriorityColor = (priority: string) => {
 const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isMenu, setIsMenu] = useState(false);
+  const { formatDate } = useTimezone();
 
   const priorityColor = useMemo(
     () => getPriorityColor(task.priority),
@@ -32,8 +34,8 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
 
   const formattedDueDate = useMemo(() => {
     if (!task?.dueDate) return "No due date";
-    return "Due " + new Date(task.dueDate).toLocaleDateString();
-  }, [task.dueDate]);
+    return "Due " + formatDate(task.dueDate);
+  }, [formatDate, task.dueDate]);
 
   const assigneeList = useMemo(() => {
     if (!isAssigneeArray(task.assignees)) return [];
@@ -78,7 +80,7 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
         <img
           key={assignee._id || assignee.email || index}
           className="w-8 h-8 bg-gradient-to-r rounded-full border-2 border-gray-900 transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
-          src={assignee.avatarUrl}
+          src={assignee.avatarURL}
           alt={`${assignee.name[0]} avatar`}
         />
       )),

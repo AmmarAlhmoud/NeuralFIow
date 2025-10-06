@@ -5,22 +5,30 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import toast from "react-hot-toast";
-import type { Assignee, Task } from "../../types/workspace";
+import type {
+  Assignee,
+  Task,
+  TeamMember,
+  Workspace,
+} from "../../types/workspace";
 import { useDispatch } from "react-redux";
 import { appActions } from "../../store/appSlice";
 import { CustomSelectInput } from "../ui/CustomSelectInput";
 import { isAssigneeArray } from "../Utils/helperFuns";
+import DateTimePicker from "../ui/DateTimePicker";
 
 interface TaskModalProps {
   isOpen: boolean | null;
   onSubmit: (formData: Task, type: "create" | "update") => void;
   initialData?: Task | null;
+  workspace: Workspace | null;
 }
 
 export const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   onSubmit,
   initialData,
+  workspace,
 }) => {
   const dispatch = useDispatch();
 
@@ -32,7 +40,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     assignees: initialData?.assignees || [],
     priority: initialData?.priority || "medium",
     status: initialData?.status || "todo",
-    dueDate: initialData?.dueDate,
+    dueDate: initialData?.dueDate || null,
     estimate: initialData?.estimate,
     tags: initialData?.tags || [],
     order: initialData?.order || 6,
@@ -61,8 +69,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       data = { ...data, assignees: assigneesIds };
     }
 
-    console.log(data);
-
     if (initialData) {
       onSubmit(data, "update");
       dispatch(appActions.setTaskModal(false));
@@ -75,7 +81,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   if (!isOpen) return null;
 
-  // TODO: Increase the number of tags
   // Options
   const tagOptions = [
     { value: "Research", label: "Research" },
@@ -83,6 +88,121 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     { value: "Frontend", label: "Frontend" },
     { value: "Backend", label: "Backend" },
     { value: "Design", label: "Design" },
+    { value: "Marketing", label: "Marketing" },
+    { value: "Testing", label: "Testing" },
+    { value: "Development", label: "Development" },
+    { value: "Project Management", label: "Project Management" },
+    { value: "UI/UX", label: "UI/UX" },
+
+    { value: "SEO", label: "SEO" },
+    { value: "Analytics", label: "Analytics" },
+    { value: "Quality Assurance", label: "Quality Assurance" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "Security", label: "Security" },
+    { value: "Mobile", label: "Mobile" },
+    { value: "Database", label: "Database" },
+    { value: "Cloud", label: "Cloud" },
+    { value: "Networking", label: "Networking" },
+    { value: "Machine Learning", label: "Machine Learning" },
+
+    { value: "AI", label: "AI" },
+    { value: "Big Data", label: "Big Data" },
+    { value: "Blockchain", label: "Blockchain" },
+    { value: "Game Development", label: "Game Development" },
+    { value: "Multimedia", label: "Multimedia" },
+    { value: "E-commerce", label: "E-commerce" },
+    { value: "Social Media", label: "Social Media" },
+    { value: "Content Creation", label: "Content Creation" },
+    { value: "Writing", label: "Writing" },
+    { value: "Editing", label: "Editing" },
+
+    { value: "Customer Support", label: "Customer Support" },
+    { value: "Documentation", label: "Documentation" },
+    { value: "Automation", label: "Automation" },
+    { value: "Integration", label: "Integration" },
+    { value: "Performance", label: "Performance" },
+    { value: "Accessibility", label: "Accessibility" },
+    { value: "Localization", label: "Localization" },
+    { value: "Legal", label: "Legal" },
+    { value: "Compliance", label: "Compliance" },
+    { value: "Training", label: "Training" },
+
+    { value: "Recruitment", label: "Recruitment" },
+    { value: "HR", label: "HR" },
+    { value: "Finance", label: "Finance" },
+    { value: "Budgeting", label: "Budgeting" },
+    { value: "Strategy", label: "Strategy" },
+    { value: "Innovation", label: "Innovation" },
+    { value: "Research and Development", label: "Research and Development" },
+    { value: "Leadership", label: "Leadership" },
+    { value: "Operations", label: "Operations" },
+    { value: "Support", label: "Support" },
+
+    { value: "Maintenance", label: "Maintenance" },
+    { value: "Bug Fixing", label: "Bug Fixing" },
+    { value: "Refactoring", label: "Refactoring" },
+    { value: "Documentation Writing", label: "Documentation Writing" },
+    { value: "User Testing", label: "User Testing" },
+    { value: "Prototyping", label: "Prototyping" },
+    { value: "Deployment", label: "Deployment" },
+    { value: "Monitoring", label: "Monitoring" },
+    { value: "Customer Feedback", label: "Customer Feedback" },
+    { value: "Collaboration", label: "Collaboration" },
+
+    { value: "Planning", label: "Planning" },
+    { value: "Sprint", label: "Sprint" },
+    { value: "Scrum", label: "Scrum" },
+    { value: "Kanban", label: "Kanban" },
+    { value: "Agile", label: "Agile" },
+    { value: "Waterfall", label: "Waterfall" },
+    { value: "Bug Tracking", label: "Bug Tracking" },
+    { value: "Code Review", label: "Code Review" },
+    { value: "Continuous Integration", label: "Continuous Integration" },
+    { value: "Continuous Delivery", label: "Continuous Delivery" },
+
+    { value: "Testing Automation", label: "Testing Automation" },
+    { value: "Unit Testing", label: "Unit Testing" },
+    { value: "Integration Testing", label: "Integration Testing" },
+    { value: "End to End Testing", label: "End to End Testing" },
+    { value: "Database Design", label: "Database Design" },
+    { value: "Server Management", label: "Server Management" },
+    { value: "API Design", label: "API Design" },
+    { value: "Web Development", label: "Web Development" },
+    { value: "Mobile Development", label: "Mobile Development" },
+    { value: "Cross Platform", label: "Cross Platform" },
+
+    { value: "React", label: "React" },
+    { value: "TypeScript", label: "TypeScript" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "Node.js", label: "Node.js" },
+    { value: "Python", label: "Python" },
+    { value: "Java", label: "Java" },
+    { value: "C++", label: "C++" },
+    { value: "SQL", label: "SQL" },
+    { value: "NoSQL", label: "NoSQL" },
+    { value: "GraphQL", label: "GraphQL" },
+
+    { value: "Docker", label: "Docker" },
+    { value: "Kubernetes", label: "Kubernetes" },
+    { value: "AWS", label: "AWS" },
+    { value: "Azure", label: "Azure" },
+    { value: "GCP", label: "GCP" },
+    { value: "Linux", label: "Linux" },
+    { value: "Windows", label: "Windows" },
+    { value: "MacOS", label: "MacOS" },
+    { value: "Virtualization", label: "Virtualization" },
+    { value: "Automation Testing", label: "Automation Testing" },
+
+    { value: "Performance Testing", label: "Performance Testing" },
+    { value: "UI Testing", label: "UI Testing" },
+    { value: "UX Design", label: "UX Design" },
+    { value: "Product Management", label: "Product Management" },
+    { value: "Customer Success", label: "Customer Success" },
+    { value: "Technical Writing", label: "Technical Writing" },
+    { value: "DevSecOps", label: "DevSecOps" },
+    { value: "SRE", label: "SRE" },
+    { value: "Site Reliability", label: "Site Reliability" },
+    { value: "Incident Management", label: "Incident Management" },
   ];
 
   const priorityOptions = [
@@ -107,20 +227,20 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     { value: "5", label: "Fifth" },
   ];
 
-  const assigneeOptions: Assignee[] = [
-    {
-      _id: "assignee1",
-      name: "John Doe",
-      email: "john@example.com",
-      avatarUrl: "https://www.gravatar.com/avatar/?d=mp",
-    },
-    {
-      _id: "assignee2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      avatarUrl: "https://www.gravatar.com/avatar/?d=mp",
-    },
-  ];
+  const teamMembers: TeamMember[] | undefined = workspace?.members;
+
+  let assigneeOptions: Assignee[] = [];
+
+  if (teamMembers) {
+    assigneeOptions = teamMembers.map((member) => {
+      return {
+        _id: member.uid?._id || "",
+        name: member.uid?.name || "",
+        email: member.uid?.email || "",
+        avatarURL: member.uid?.avatarURL || "",
+      };
+    });
+  }
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -268,24 +388,23 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             />
           </div>
 
-          <label
-            className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
-            title="Due Date (Optional)"
-          >
-            Due Date
-          </label>
-          <Input
-            type="date"
-            name="dueDate"
-            className="mt-1"
-            value={
-              formData.dueDate
-                ? new Date(formData.dueDate).toISOString().split("T")[0]
-                : ""
-            }
-            onChange={handleInputChange}
-          />
-
+          <div className="flex flex-col space-y-1">
+            <label
+              className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+              title="Due Date (Optional)"
+            >
+              Due Date
+            </label>
+            <DateTimePicker
+              value={formData.dueDate ? new Date(formData.dueDate) : null}
+              onChange={(newDate) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  dueDate: newDate || null,
+                }))
+              }
+            />
+          </div>
           <Button type="submit" size="lg-full">
             {initialData ? "Update Task" : "Create Task"}
           </Button>
