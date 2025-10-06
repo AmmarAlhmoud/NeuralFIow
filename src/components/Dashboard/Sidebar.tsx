@@ -81,7 +81,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       }`}
     >
       <div className={`p-6 ${isCollapsed ? "hidden md:block" : ""}`}>
-        {/* Logo */}
         <div className="flex items-center space-x-3 mb-8">
           <div
             className={`w-10 h-10 ${
@@ -105,15 +104,12 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* Profile */}
-
         <Profile
           userData={user}
           handleLogout={logout}
           className="flex flex-row-reverse mb-8 pb-8 border-b dark:border-white/10 border-black/10 sm:hidden"
         />
 
-        {/* Navigation */}
         <nav className="space-y-2">
           {navigationItems.map(({ id, icon: Icon, label }) => (
             <button
@@ -147,14 +143,13 @@ const Sidebar: React.FC<SidebarProps> = ({
           ))}
         </nav>
 
-        {/* Workspaces */}
         {currentPage !== "home" && !isCollapsed && (
           <div className="mt-8 pt-8 border-t dark:border-white/10 border-black/10">
             <div className="text-xs font-semibold dark:text-gray-400 text-gray-800 mb-4 tracking-wider uppercase">
               Workspaces
             </div>
-            <div className="space-y-3">
-              <div className="h-60 overflow-y-scroll custom-scrollbar">
+            <div className="space-y-4">
+              <div className="flex flex-col min-h-60 max-h-60 overflow-y-auto space-y-1.5 custom-scrollbar px-2">
                 {workspacesList}
               </div>
               <div className="flex flex-col mt-3">
@@ -173,7 +168,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Collapse Button */}
       <button
         onClick={onToggle}
         className="absolute -right-4 top-8 w-8 h-8 glassmorphic rounded-full flex items-center justify-center hover:neon-glow group transition-all"
