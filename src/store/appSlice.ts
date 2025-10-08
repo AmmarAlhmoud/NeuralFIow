@@ -6,6 +6,7 @@ import {
   type TeamMember,
   type WorkspaceFormSettings,
 } from "../types/workspace";
+import type { AuthUser } from "../types/auth";
 
 interface AppState {
   isDarkMode: boolean;
@@ -19,7 +20,9 @@ interface AppState {
   clickTeamMember: TeamMember | null;
   workspaceSettings: WorkspaceFormSettings | null;
   deletedWorkspaceId: string | null;
-  userProfile: UserProfileSettings | null;
+  userProfile: AuthUser | null;
+  updateUserProfile: UserProfileSettings | null;
+  isLogout: boolean | null;
 }
 
 const initialState: AppState = {
@@ -35,6 +38,8 @@ const initialState: AppState = {
   workspaceSettings: null,
   deletedWorkspaceId: null,
   userProfile: null,
+  updateUserProfile: null,
+  isLogout: null,
 };
 
 const appSlice = createSlice({
@@ -85,8 +90,17 @@ const appSlice = createSlice({
     setDeletedWorkspaceId(state, action: PayloadAction<string | null>) {
       state.deletedWorkspaceId = action.payload;
     },
-    setUserProfile(state, action: PayloadAction<UserProfileSettings | null>) {
+    setUserProfile(state, action: PayloadAction<AuthUser | null>) {
       state.userProfile = action.payload;
+    },
+    setUpdateUserProfile(
+      state,
+      action: PayloadAction<UserProfileSettings | null>
+    ) {
+      state.updateUserProfile = action.payload;
+    },
+    setIsLogout(state, action: PayloadAction<boolean | null>) {
+      state.isLogout = action.payload;
     },
   },
 });

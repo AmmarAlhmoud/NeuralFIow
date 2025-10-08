@@ -3,13 +3,14 @@ import { Plus } from "lucide-react";
 import { type TeamMember, type Workspace } from "../../types/workspace";
 import { Button } from "../ui/Button";
 import Loading from "../ui/Loading";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
 import { appActions } from "../../store/appSlice";
 import TeamMemberCard from "./TeamMemberCard";
 import { useAuthContext } from "../../hooks/useAuth";
 import WorkspaceSettings from "./WorkspaceSettings";
 import type { Role } from "../../types/auth";
+import ProfileSettings from "./ProfileSettings";
 
 interface SettingsProps {
   workspace: Workspace | undefined;
@@ -19,8 +20,9 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuthContext();
   const [currentUser, setCurrentUser] = useState(false);
-
   const [currentUserRole, setCurrentUserRole] = useState<Role>("viewer");
+
+  const userProfile = useSelector((state: RootState) => state.app.userProfile);
 
   const aiSettings = [
     {
@@ -80,7 +82,6 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
 
   return (
     <div className="px-6 pb-6">
-      {/* Header */}
       <div className="mb-8 glassmorphic rounded-2xl p-8">
         <h1 className="text-3xl font-bold bg-gradient-to-r dark:from-white dark:to-gray-300 from-black to-gray-700 bg-clip-text text-transparent mb-2">
           Neural Settings
@@ -92,78 +93,16 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {/* Profile Settings */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("Profile saved");
-            }}
-            className="glassmorphic rounded-2xl p-8"
-          >
-            <h3 className="text-xl font-semibold dark:text-white text-black mb-6">
-              Profile Configuration
-            </h3>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-3">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  defaultValue="Alex Chen"
-                  className="w-full px-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10  rounded-xl dark:text-white text-black dark:placeholder-gray-400 placeholder-gray-800 focus:outline-none input-glow"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-3">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  defaultValue="alex@neuralflow.ai"
-                  className="w-full px-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl dark:text-white text-black dark:placeholder-gray-400  placeholder-gray-800 focus:outline-none input-glow"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Position
-                </label>
-                <select
-                  className="
-                    w-full px-4 py-3
-                    bg-white/5 dark:bg-gray-800/80
-                    border border-black/10 dark:border-gray-700/70
-                    rounded-xl
-                    text-black dark:text-white
-                    focus:outline-none focus:ring-2 focus:ring-[#b74fd6]/50 dark:focus:ring-[#d64f4f]/50
-                    backdrop-blur-sm
-                    input-glow
-                    transition-all
-                  "
-                >
-                  <option>Product Lead</option>
-                  <option>AI Engineer</option>
-                  <option>UX Designer</option>
-                  <option>Data Scientist</option>
-                </select>
-              </div>
-            </div>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md-full"
-              className="mt-6"
-            >
-              Save Profile
-            </Button>
-          </form>
+          <ProfileSettings
+            initialData={userProfile || null}
+            provider={user?.provider || null}
+          />
 
-          {/* Team Members */}
           <div className="glassmorphic rounded-2xl p-8">
             <h3 className="text-xl font-semibold dark:text-white text-black mb-6">
               Neural Team
             </h3>
-            <div className="space-y-4 min-h-67 max-h-67 overflow-y-scroll custom-scrollbar px-2">
+            <div className="space-y-4 min-h-67 max-h-67 overflow-y-auto custom-scrollbar px-2">
               {teamMembersList}
             </div>
 
@@ -184,7 +123,6 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
         </div>
 
         <div className="space-y-8">
-          {/* AI Neural Settings */}
           {currentUser && (
             <form
               onSubmit={(e) => {
@@ -238,7 +176,6 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
             </form>
           )}
 
-          {/* Workspace Settings */}
           {currentUser && <WorkspaceSettings initialData={workspace} />}
         </div>
       </div>

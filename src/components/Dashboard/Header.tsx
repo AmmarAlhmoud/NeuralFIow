@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { type HeaderProps } from "../../types/dashboard";
 import Profile from "./Profile";
 import { useAuthContext } from "../../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { appActions } from "../../store/appSlice";
 
-const Header: React.FC<HeaderProps> = ({
-  currentPage,
-}) => {
+const Header: React.FC<HeaderProps> = ({ currentPage }) => {
   const { user, logout } = useAuthContext();
   const { workspaceId } = useParams();
+  const dipsatch = useDispatch<AppDispatch>();
+
+  const userProfile = useSelector((state: RootState) => state.app.userProfile);
+  const updatedUserProfile = useSelector(
+    (state: RootState) => state.app.updateUserProfile
+  );
 
   const getPageTitle = (page: string) => {
     const titles = {
@@ -18,9 +25,28 @@ const Header: React.FC<HeaderProps> = ({
       analytics: "Analytics",
       settings: "Settings",
       project: "Project",
+      profile: "Profile",
     };
     return titles[page as keyof typeof titles] || "Dashboard";
   };
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        dipsatch(appActions.setUserProfile(data.data));
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    if (user && !updatedUserProfile) {
+      getUserProfile();
+    }
+  }, [dipsatch, updatedUserProfile, user]);
 
   return (
     <header className="sticky top-3 mx-6 mb-8 xl:mb-6 z-20">
@@ -29,7 +55,6 @@ const Header: React.FC<HeaderProps> = ({
                       bg-white/30 dark:bg-gray-900/30 border border-white/10 dark:border-gray-700/30"
       >
         <div className="w-full flex flex-row xl:flex-row items-center justify-between px-4 space-y-6 xl:space-y-0">
-          {/* Left Section */}
           <section
             className="flex-1 flex flex-col justify-center items-center space-y-4 
                               xl:flex-row xl:items-center xl:space-y-0 xl:space-x-6"
@@ -48,7 +73,6 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Search */}
               <div className="relative group">
                 <input
                   type="text"
@@ -66,9 +90,8 @@ const Header: React.FC<HeaderProps> = ({
             </div>
           </section>
 
-          {/* Right Section */}
           <Profile
-            userData={user}
+            userData={userProfile}
             handleLogout={logout}
             className="hidden flex-1 sm:flex sm:flex-col-reverse xl:flex-row items-center xl:justify-end space-y-4 xl:space-y-0 xl:space-x-4"
           />

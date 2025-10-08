@@ -21,7 +21,6 @@ export interface TeamMember {
   avatarUrl?: string;
   joinedAt?: string;
   position?: string;
-  isOnline?: boolean;
 }
 
 export interface WorkspaceFormSettings {
@@ -32,7 +31,6 @@ export interface WorkspaceFormSettings {
 }
 
 export interface UserProfileSettings {
-  _id: string;
   name: string;
   email: string;
   position?: string | undefined;
