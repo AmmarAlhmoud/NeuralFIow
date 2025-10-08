@@ -33,7 +33,8 @@ export interface AuthUser {
   name: string | null;
   avatarURL: string | null;
   position?: string;
-  provider?: string;
+  provider?: string | null;
+  isOnline?: boolean;
 }
 
 export interface AuthContextType {

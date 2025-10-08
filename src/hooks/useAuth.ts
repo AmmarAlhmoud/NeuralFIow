@@ -85,6 +85,7 @@ export const useAuth = () => {
           email: firebaseUser.email ?? "",
           name: firebaseUser.displayName ?? null,
           avatarURL: firebaseUser.photoURL ?? null,
+          provider: firebaseUser.providerData[0].providerId ?? null,
         });
 
         setAuthState((prev) => ({
@@ -164,6 +165,7 @@ export const useAuth = () => {
           email: firebaseUser.email ?? "",
           name: firebaseUser.displayName ?? signupData.fullName ?? null,
           avatarURL: firebaseUser.photoURL ?? null,
+          provider: firebaseUser.providerData[0].providerId ?? null,
         };
 
         // Write user to DB on the backend
@@ -229,6 +231,7 @@ export const useAuth = () => {
             email: firebaseUser.email ?? "",
             name: firebaseUser.displayName ?? null,
             avatarURL: firebaseUser.photoURL ?? null,
+            provider: firebaseUser.providerData[0].providerId ?? null,
           };
 
           // Bootstrap backend user

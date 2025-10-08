@@ -8,8 +8,8 @@ import { X, Check } from "lucide-react";
 import type { AuthUser } from "./types/auth";
 import { signOut } from "./firebase/auth";
 import { auth } from "./firebase/config";
-import { useSelector } from "react-redux";
-import { type RootState } from "./store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { type AppDispatch, type RootState } from "./store/store";
 import MainPage from "./pages/Main";
 import AuthPage from "./pages/Auth";
 import DashboardPage from "./pages/Dashboard";
@@ -20,6 +20,8 @@ import ProtectedRouteWithUser from "./pages/ProtectedRouteWithUser";
 import ProtectedRouteNoUser from "./pages/ProtectedRouteNoUser";
 import AnimatedBackground from "./components/Background/AnimatedBackground";
 import Loading from "./components/ui/Loading";
+import { appActions } from "./store/appSlice";
+import ProfilePage from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        path: "profile",
+        element: <ProfilePage />,
+      },
+      {
         path: "workspace/:workspaceId",
         element: <DashboardPage />,
       },
@@ -44,6 +50,7 @@ const router = createBrowserRouter([
       { path: "workspace/:workspaceId/settings", element: <SettingsPage /> },
     ],
   },
+
   {
     path: "auth",
     element: (
@@ -59,7 +66,9 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
+  const isLogout = useSelector((state: RootState) => state.app.isLogout);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
 
   // logout handler
   const logoutHandler = useCallback(async () => {
@@ -125,6 +134,13 @@ const App: React.FC = () => {
     const interval = setInterval(checkSession, 30 * 1000);
     return () => clearInterval(interval);
   }, [logoutHandler]);
+
+  useEffect(() => {
+    if (isLogout) {
+      logoutHandler();
+      dispatch(appActions.setIsLogout(null));
+    }
+  }, [dispatch, isLogout, logoutHandler]);
 
   useEffect(() => {
     if (isDarkMode) {
