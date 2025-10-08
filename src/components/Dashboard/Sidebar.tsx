@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   Plus,
   Home,
+  UserRoundCog,
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
 import Profile from "./Profile";
@@ -30,6 +31,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: Home,
       label: "Home",
     },
+    {
+      id: "profile",
+      icon: UserRoundCog,
+      label: "Profile",
+    },
   ];
 
   const navigationItemsWithWorkspace = [
@@ -40,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   let navigationItems = [];
 
-  if (currentPage === "home") {
+  if (currentPage === "home" || currentPage === "profile") {
     navigationItems = navigationItemsNoWorkspace;
   } else {
     navigationItems = navigationItemsWithWorkspace;
@@ -143,29 +149,31 @@ const Sidebar: React.FC<SidebarProps> = ({
           ))}
         </nav>
 
-        {currentPage !== "home" && !isCollapsed && (
-          <div className="mt-8 pt-8 border-t dark:border-white/10 border-black/10">
-            <div className="text-xs font-semibold dark:text-gray-400 text-gray-800 mb-4 tracking-wider uppercase">
-              Workspaces
-            </div>
-            <div className="space-y-4">
-              <div className="flex flex-col min-h-60 max-h-60 overflow-y-auto space-y-1.5 custom-scrollbar px-2">
-                {workspacesList}
+        {currentPage !== "home" &&
+          currentPage !== "profile" &&
+          !isCollapsed && (
+            <div className="mt-8 pt-8 border-t dark:border-white/10 border-black/10">
+              <div className="text-xs font-semibold dark:text-gray-400 text-gray-800 mb-4 tracking-wider uppercase">
+                Workspaces
               </div>
-              <div className="flex flex-col mt-3">
-                <Button
-                  type="button"
-                  variant="gradient"
-                  className="flex space-x-2"
-                  onClick={() => setWorkspacesModal(true)}
-                >
-                  <Plus />
-                  <span>Create Workspace</span>
-                </Button>
+              <div className="space-y-4">
+                <div className="flex flex-col min-h-60 max-h-60 overflow-y-auto space-y-1.5 custom-scrollbar px-2">
+                  {workspacesList}
+                </div>
+                <div className="flex flex-col mt-3">
+                  <Button
+                    type="button"
+                    variant="gradient"
+                    className="flex space-x-2"
+                    onClick={() => setWorkspacesModal(true)}
+                  >
+                    <Plus />
+                    <span>Create Workspace</span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       <button

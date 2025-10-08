@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../hooks/useAuth";
@@ -7,6 +7,7 @@ import Settings from "../components/Settings/Settings";
 import { InviteMembersModal } from "../components/Settings/InviteMembersModal";
 import type {
   TeamMember,
+  UserProfileSettings,
   Workspace,
   WorkspaceFormSettings,
 } from "../types/workspace";
@@ -45,7 +46,9 @@ const SettingsPage: React.FC = () => {
     (state: RootState) => state.app.isConfirmationModal
   );
 
-  const userProfile = useSelector((state: RootState) => state.app.userProfile);
+  const updateUserProfile = useSelector(
+    (state: RootState) => state.app.updateUserProfile
+  );
 
   const teamMemberHandler = (
     formData: TeamMember,
@@ -221,6 +224,40 @@ const SettingsPage: React.FC = () => {
         toast.error("Failed to delete workspace. Please try again.");
       }
     };
+    const updateUserProfileFn = async (userProfile: UserProfileSettings) => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userProfile),
+        });
+
+        const data = await res.json();
+        if (res.status === 400 || res.status === 403 || res.status === 404) {
+          if (data.errors) {
+            toast.error(data?.errors[0].message);
+          } else {
+            toast.error(data.message);
+          }
+        }
+        if (res.status === 200) {
+          if (userProfile.email !== user?.email) {
+            toast.success("Please login again to verify your identity");
+            setTimeout(() => {
+              dispatch(appActions.setIsLogout(true));
+            }, 3000);
+          } else {
+            toast.success("User profile updated successfully!");
+          }
+        }
+        dispatch(appActions.setUpdateUserProfile(null));
+      } catch (_) {
+        toast.error("Failed to update user profile. Please try again.");
+      }
+    };
 
     if (invitedMember) {
       sendInvite(invitedMember);
@@ -245,9 +282,8 @@ const SettingsPage: React.FC = () => {
       }
     }
 
-    if (userProfile) {
-      console.log(userProfile);
-      dispatch(appActions.setUserProfile(null));
+    if (updateUserProfile) {
+      updateUserProfileFn(updateUserProfile);
     }
 
     if (deletedWorkspaceId && deleteWorkspaceAction) {
@@ -267,8 +303,8 @@ const SettingsPage: React.FC = () => {
     invitedMember,
     navigate,
     updateTeamMemberData,
+    updateUserProfile,
     user,
-    userProfile,
     workspaceId,
     workspaceSettings,
   ]);

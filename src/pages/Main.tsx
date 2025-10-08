@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  useParams,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
@@ -39,6 +35,7 @@ const MainPage: React.FC = () => {
   const getCurrentPage = (): PageType => {
     if (location.pathname.includes("analytics")) return "analytics";
     if (location.pathname.includes("settings")) return "settings";
+    if (location.pathname.includes("profile")) return "profile";
     if (workspaceId !== undefined && !projectId) {
       return "dashboard";
     }
@@ -66,6 +63,9 @@ const MainPage: React.FC = () => {
         break;
       case "settings":
         navigate(`/workspace/${workspaceId}/settings`);
+        break;
+      case "profile":
+        navigate(`/profile`);
         break;
     }
   };
@@ -229,6 +229,7 @@ const MainPage: React.FC = () => {
         {(currentPage === "dashboard" ||
           currentPage === "project" ||
           currentPage === "analytics" ||
+          currentPage === "profile" ||
           currentPage === "settings") && <Outlet />}
       </div>
 

@@ -46,9 +46,9 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({
           />
           <div
             className={`hidden sm:block absolute -bottom-1 -right-1 w-4 h-4 ${
-              member.isOnline ? "bg-green-500" : "bg-yellow-500"
+              member.uid!.isOnline ? "bg-green-500" : "bg-yellow-500"
             } rounded-full border-2 border-gray-900 ${
-              member.isOnline ? "animate-pulse" : ""
+              member.uid!.isOnline ? "animate-pulse" : ""
             }`}
           ></div>
         </div>

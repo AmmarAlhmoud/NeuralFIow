@@ -6,7 +6,8 @@ export type PageType =
   | "dashboard"
   | "analytics"
   | "settings"
-  | "project";
+  | "project"
+  | "profile";
 
 export interface DashboardProps {
   isDarkMode?: boolean;
