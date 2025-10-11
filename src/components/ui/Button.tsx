@@ -1,6 +1,6 @@
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "social" | "gradient" | "warning";
-  size?: "sm" | "md" | "md-full" | "lg" | "lg-full";
+  variant?: "primary" | "social" | "gradient" | "warning" | "noBg";
+  size?: "xs" | "sm" | "md" | "md-full" | "lg" | "lg-full";
   isLoading?: boolean;
   children: React.ReactNode;
 }
@@ -15,6 +15,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const sizeClasses: Record<string, string> = {
+    xs: "px-4 py-2 text-xs rounded-lg",
     sm: "px-4 py-2 text-sm rounded-lg",
     md: "px-6 py-3 text-base rounded-xl",
     "md-full": "px-6 py-3 text-base rounded-xl w-full",
@@ -32,8 +33,9 @@ export const Button: React.FC<ButtonProps> = ({
       "dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 dark:text-white text-black font-medium dark:hover:bg-white/10 hover:bg-black/10 hover:neon-glow-cyan flex items-center justify-center space-x-3",
     gradient:
       "relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg group",
+    noBg: "border border-pink-600 text-pink-600 bg-transparent bg-gradient-to-r from-neon-scarlet to-neon-fuchsia bg-clip-text text-transparent hover:from-neon-fuchsia hover:to-neon-scarlet hover:scale-1 hover:scale-1> transition-all ease-in-out duration-300 text-xs font-semibold cursor-pointer group",
     warning:
-      "bg-gradient-to-r from-red-500 to-neon-scarlet dark:text-white text-black hover:shadow-lg hover:shadow-neon-fuchsia/25",
+      "bg-gradient-to-r from-red-500 to-neon-scarlet dark:text-white text-black hover:neon-glow-red",
   };
 
   return (
