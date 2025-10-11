@@ -26,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage }) => {
       settings: "Settings",
       project: "Project",
       profile: "Profile",
+      notifications: "Notifications",
     };
     return titles[page as keyof typeof titles] || "Dashboard";
   };

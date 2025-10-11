@@ -36,6 +36,7 @@ const MainPage: React.FC = () => {
     if (location.pathname.includes("analytics")) return "analytics";
     if (location.pathname.includes("settings")) return "settings";
     if (location.pathname.includes("profile")) return "profile";
+    if (location.pathname.includes("notifications")) return "notifications";
     if (workspaceId !== undefined && !projectId) {
       return "dashboard";
     }
@@ -66,6 +67,9 @@ const MainPage: React.FC = () => {
         break;
       case "profile":
         navigate(`/profile`);
+        break;
+      case "notifications":
+        navigate(`/notifications`);
         break;
     }
   };
@@ -161,7 +165,7 @@ const MainPage: React.FC = () => {
       getWorkspaces();
     }
 
-    if (workspaces?.length === 0) {
+    if (workspaces?.length === 0 && currentPage === "dashboard") {
       navigate("/");
     }
 
@@ -174,8 +178,9 @@ const MainPage: React.FC = () => {
     projectData,
     workspaceId,
     dispatch,
-    workspaces?.length,
     navigate,
+    workspaces?.length,
+    currentPage,
   ]);
 
   return (
@@ -230,6 +235,7 @@ const MainPage: React.FC = () => {
           currentPage === "project" ||
           currentPage === "analytics" ||
           currentPage === "profile" ||
+          currentPage === "notifications" ||
           currentPage === "settings") && <Outlet />}
       </div>
 

@@ -22,6 +22,7 @@ import AnimatedBackground from "./components/Background/AnimatedBackground";
 import Loading from "./components/ui/Loading";
 import { appActions } from "./store/appSlice";
 import ProfilePage from "./pages/Profile";
+import NotificationPage from "./pages/Notification";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
       },
       { path: "workspace/:workspaceId/analytics", element: <AnalyticsPage /> },
       { path: "workspace/:workspaceId/settings", element: <SettingsPage /> },
+      {
+        path: "notifications",
+        element: <NotificationPage />,
+      },
+      {
+        path: "notifications/:noteId",
+        element: <div>Item</div>,
+      },
     ],
   },
 

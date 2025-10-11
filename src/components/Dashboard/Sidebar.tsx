@@ -7,6 +7,7 @@ import {
   Plus,
   Home,
   UserRoundCog,
+  Bell,
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
 import Profile from "./Profile";
@@ -36,6 +37,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: UserRoundCog,
       label: "Profile",
     },
+    {
+      id: "notifications",
+      icon: Bell,
+      label: "Notifications",
+    },
   ];
 
   const navigationItemsWithWorkspace = [
@@ -46,7 +52,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   let navigationItems = [];
 
-  if (currentPage === "home" || currentPage === "profile") {
+  if (
+    currentPage === "home" ||
+    currentPage === "profile" ||
+    currentPage === "notifications"
+  ) {
     navigationItems = navigationItemsNoWorkspace;
   } else {
     navigationItems = navigationItemsWithWorkspace;
@@ -151,6 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {currentPage !== "home" &&
           currentPage !== "profile" &&
+          currentPage !== "notifications" &&
           !isCollapsed && (
             <div className="mt-8 pt-8 border-t dark:border-white/10 border-black/10">
               <div className="text-xs font-semibold dark:text-gray-400 text-gray-800 mb-4 tracking-wider uppercase">
