@@ -7,6 +7,7 @@ import {
   type WorkspaceFormSettings,
 } from "../types/workspace";
 import type { AuthUser } from "../types/auth";
+import type { InvitationStatus } from "../types/notification";
 
 interface AppState {
   isDarkMode: boolean;
@@ -23,6 +24,11 @@ interface AppState {
   userProfile: AuthUser | null;
   updateUserProfile: UserProfileSettings | null;
   isLogout: boolean | null;
+  invitationStatus: InvitationStatus | null;
+  markAsRead: string | null;
+  deletedNoteId: string | null;
+  isMarkAllAsRead: boolean | null;
+  isAllNotesDeleted: boolean | null;
 }
 
 const initialState: AppState = {
@@ -40,6 +46,11 @@ const initialState: AppState = {
   userProfile: null,
   updateUserProfile: null,
   isLogout: null,
+  invitationStatus: null,
+  markAsRead: null,
+  deletedNoteId: null,
+  isMarkAllAsRead: null,
+  isAllNotesDeleted: null,
 };
 
 const appSlice = createSlice({
@@ -72,7 +83,7 @@ const appSlice = createSlice({
     setTaskDrawer(state, action: PayloadAction<boolean>) {
       state.isTaskDrawer = action.payload;
     },
-    setConfirmationModal(state, action: PayloadAction<boolean>) {
+    setIsConfirmationModal(state, action: PayloadAction<boolean>) {
       state.isConfirmationModal = action.payload;
     },
     setInviteMembersModal(state, action: PayloadAction<boolean>) {
@@ -101,6 +112,21 @@ const appSlice = createSlice({
     },
     setIsLogout(state, action: PayloadAction<boolean | null>) {
       state.isLogout = action.payload;
+    },
+    setInvitationStatus(state, action: PayloadAction<InvitationStatus | null>) {
+      state.invitationStatus = action.payload;
+    },
+    setMarkAsRead(state, action: PayloadAction<string | null>) {
+      state.markAsRead = action.payload;
+    },
+    setIsMarkAllAsRead(state, action: PayloadAction<boolean | null>) {
+      state.isMarkAllAsRead = action.payload;
+    },
+    setDeletedNoteId(state, action: PayloadAction<string | null>) {
+      state.deletedNoteId = action.payload;
+    },
+    setIsAllNotesDeleted(state, action: PayloadAction<boolean | null>) {
+      state.isAllNotesDeleted = action.payload;
     },
   },
 });
