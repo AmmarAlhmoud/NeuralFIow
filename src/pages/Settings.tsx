@@ -98,7 +98,9 @@ const SettingsPage: React.FC = () => {
     const sendInvite = async (member: TeamMember) => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}/members`,
+          `${
+            import.meta.env.VITE_API_URL
+          }/workspaces/${workspaceId}/members/invite`,
           {
             method: "POST",
             credentials: "include",
@@ -169,6 +171,7 @@ const SettingsPage: React.FC = () => {
           }
         );
         dispatch(appActions.setClickTask(null));
+        dispatch(appActions.setClickTeamMember(null));
         toast.success("Member removed successfully!");
       } catch (_) {
         toast.error("Failed to remove member. Please try again.");

@@ -54,7 +54,7 @@ const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           </div>
           <div className="flex flex-col flex-2">
             {workspace.description && (
-              <div className="self-start dark:text-gray-300 text-gray-700 text-md mt-4 flex justify-center gap-x-2">
+              <div className="self-start dark:text-gray-300 text-gray-700 text-md mt-2.5 flex justify-center gap-x-2">
                 <TextQuote className="h-6 w-6 text-black dark:text-white" />
                 <p>{workspace.description}</p>
               </div>

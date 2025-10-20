@@ -126,7 +126,7 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 dispatch(appActions.setClickTask(task));
-                dispatch(appActions.setConfirmationModal(true));
+                dispatch(appActions.setIsConfirmationModal(true));
                 setIsMenu((prev) => !prev);
               }}
               className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-600/30 cursor-pointer transition-colors"

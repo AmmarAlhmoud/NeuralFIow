@@ -158,7 +158,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
         onClick={() => {
           if (initialData?._id) {
             dispatch(appActions.setDeletedWorkspaceId(initialData._id));
-            dispatch(appActions.setConfirmationModal(true));
+            dispatch(appActions.setIsConfirmationModal(true));
           }
         }}
       >
