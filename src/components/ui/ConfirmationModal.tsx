@@ -32,8 +32,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <CircleQuestionMark className="w-16 h-16" />
           )}
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 mb-4">{message}</p>
+        <h3 className="text-xl font-semibold text-black dark:text-white mb-2">
+          {title}
+        </h3>
+        <p className="text-gray-800 dark:text-gray-400 mb-4">{message}</p>
         <div className="flex space-x-3 justify-center">
           <Button
             onClick={() => {
@@ -46,7 +48,16 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               if (type === "workspace") {
                 dispatch(appActions.setDeletedWorkspaceId(null));
               }
-              dispatch(appActions.setConfirmationModal(false));
+              if (type === "notification") {
+                dispatch(appActions.setDeletedNoteId(null));
+              }
+              if (type === "notifications") {
+                dispatch(appActions.setIsAllNotesDeleted(null));
+              }
+              if (type === "invite") {
+                dispatch(appActions.setInvitationStatus(null));
+              }
+              dispatch(appActions.setIsConfirmationModal(false));
             }}
             variant="social"
             className="px-6 py-2"
@@ -56,11 +67,18 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <Button
             onClick={() => {
               action();
-              dispatch(appActions.setConfirmationModal(false));
+              dispatch(appActions.setIsConfirmationModal(false));
             }}
             className="px-6 py-2"
           >
-            {type === "task" || type === "workspace" ? "Delete" : "Remove"}
+            {type === "task" ||
+            type === "workspace" ||
+            type === "notification" ||
+            type === "notifications"
+              ? "Delete"
+              : type === "invite"
+              ? "Decline"
+              : "Remove"}
           </Button>
         </div>
       </div>
