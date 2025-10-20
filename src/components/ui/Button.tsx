@@ -33,9 +33,9 @@ export const Button: React.FC<ButtonProps> = ({
       "dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 dark:text-white text-black font-medium dark:hover:bg-white/10 hover:bg-black/10 hover:neon-glow-cyan flex items-center justify-center space-x-3",
     gradient:
       "relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg group",
-    noBg: "border border-pink-600 text-pink-600 bg-transparent bg-gradient-to-r from-neon-scarlet to-neon-fuchsia bg-clip-text text-transparent hover:from-neon-fuchsia hover:to-neon-scarlet hover:scale-1 hover:scale-1> transition-all ease-in-out duration-300 text-xs font-semibold cursor-pointer group",
+    noBg: "border border-gray-500 text-pink-600 bg-transparent bg-gradient-to-r from-neon-scarlet to-neon-fuchsia bg-clip-text text-transparent hover:from-neon-fuchsia hover:to-neon-scarlet hover:scale-1 hover:scale-1> transition-all ease-in-out duration-300 text-xs font-semibold cursor-pointer group",
     warning:
-      "bg-gradient-to-r from-red-500 to-neon-scarlet dark:text-white text-black hover:neon-glow-red",
+      "bg-gradient-to-r from-red-500 to-neon-scarlet dark:text-white text-black hover:neon-glow-red group",
   };
 
   return (
