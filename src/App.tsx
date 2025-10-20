@@ -184,7 +184,7 @@ const App: React.FC = () => {
         <Toaster
           position="bottom-right"
           toastOptions={{
-            className: "rounded-2xl shadow-xl h-14",
+            className: "rounded-2xl shadow-xl h-14 text-center",
             style: {
               background:
                 "linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f0f23)",
