@@ -6,6 +6,7 @@ import { Button } from "../ui/Button";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
 import { Trash } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 interface NotificationsItemProps {
   data: NotificationInter;
@@ -13,17 +14,21 @@ interface NotificationsItemProps {
   type?: string;
 }
 
-const NotificationsItem: React.FC<NotificationsItemProps> = ({
-  data,
-  colorClass,
-  type,
-}) => {
+const NotificationsItem = React.forwardRef<
+  HTMLLIElement,
+  NotificationsItemProps
+>(({ data, colorClass, type }, ref) => {
   const { formatDate } = useTimezone();
   const dispatch = useDispatch<AppDispatch>();
 
   if (type === "page") {
     return (
-      <li className="flex items-start gap-4 px-7 py-5 rounded-lg shadow-md shadow-black/10 bg-slate-100 dark:bg-gray-800 duration-300 ease-in-out select-none">
+      <li
+        ref={ref}
+        id={data._id}
+        className="flex items-start gap-4 px-7 py-5 rounded-lg shadow-md shadow-black/10 bg-slate-100 dark:bg-gray-800 duration-300 ease-in-out select-none"
+        style={{ scrollMarginTop: 80 }}
+      >
         <span className="mt-1">
           <svg
             className={`h-6 w-6 ${colorClass}`}
@@ -120,28 +125,36 @@ const NotificationsItem: React.FC<NotificationsItemProps> = ({
   }
 
   return (
-    <li className="flex items-start gap-2 rounded-lg px-4 py-3 bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-700/30 cursor-pointer transition">
-      <span className="mt-1">
-        <svg
-          className={`h-4 w-4 ${colorClass}`}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={50}
-          viewBox="0 0 24 24"
-        >
-          <path d="M13 16h-1v-4h-1m0-4h.01"></path>
-        </svg>
-      </span>
-      <div>
-        <div className="text-sm font-medium">{data.title}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          <time dateTime={formatDate(data.createdAt)}>
-            {formatDate(data.createdAt)}
-          </time>
+    <NavLink to={`/notifications/${data._id}`}>
+      <li
+        ref={ref}
+        id={data._id}
+        className="flex items-start gap-2 rounded-lg px-4 py-3 bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-700/30 cursor-pointer transition"
+      >
+        <span className="mt-1">
+          <svg
+            className={`h-4 w-4 ${colorClass}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={50}
+            viewBox="0 0 24 24"
+          >
+            <path d="M13 16h-1v-4h-1m0-4h.01"></path>
+          </svg>
+        </span>
+        <div>
+          <div className="text-sm font-medium">{data.title}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            <time dateTime={formatDate(data.createdAt)}>
+              {formatDate(data.createdAt)}
+            </time>
+          </div>
         </div>
-      </div>
-    </li>
+      </li>
+    </NavLink>
   );
-};
+});
+
+NotificationsItem.displayName = "NotificationsItem";
 
 export default NotificationsItem;

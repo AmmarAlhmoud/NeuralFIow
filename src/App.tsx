@@ -50,7 +50,7 @@ const router = createBrowserRouter([
       { path: "workspace/:workspaceId/analytics", element: <AnalyticsPage /> },
       { path: "workspace/:workspaceId/settings", element: <SettingsPage /> },
       {
-        path: "notifications",
+        path: "notifications/:noteId?",
         element: <NotificationPage />,
       },
       {

@@ -201,7 +201,7 @@ const NotificationPage: React.FC = () => {
     }
 
     if (notifications.length > 0) {
-      content = <NotificationsList data={notifications || null} />;
+      content = <NotificationsList notes={notifications || null} />;
     }
   }
 
