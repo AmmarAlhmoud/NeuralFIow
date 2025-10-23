@@ -13,6 +13,7 @@ import type {
 } from "../types/auth";
 import { AuthContext } from "../context/AuthContext";
 import { getIdTokenOrThrow } from "../firebase/auth";
+import { connectSocket } from "../utils/socket";
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -87,6 +88,7 @@ export const useAuth = () => {
           avatarURL: firebaseUser.photoURL ?? null,
           provider: firebaseUser.providerData[0].providerId ?? null,
         });
+        connectSocket();
 
         setAuthState((prev) => ({
           ...prev,
@@ -177,6 +179,7 @@ export const useAuth = () => {
         });
 
         handleAuthUser(freshUser);
+        connectSocket();
 
         setAuthState((prev) => ({
           ...prev,
