@@ -1,29 +1,32 @@
 import React, { memo, useMemo, useCallback, useState } from "react";
 import { type Task } from "../../types/workspace";
-import { isAssigneeArray } from "../Utils/helperFuns";
+import { isAssigneeArray } from "../../utils/helperFuns";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
-import { Menu, Trash, Pencil } from "lucide-react";
+import { Menu, Trash, Pencil, Clock } from "lucide-react";
 import useTimezone from "../../hooks/useTimezone";
+import { useNavigate } from "react-router-dom";
+import { getPriorityColor } from "../../utils/helperFuns";
 export interface TaskCardProps {
   task: Task;
 }
 
-const getPriorityColor = (priority: string) => {
-  const colors = {
-    critical:
-      "bg-gradient-to-r from-red-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.3)]",
-    high: "bg-gradient-to-r from-purple-600 to-purple-700 shadow-[0_0_15px_rgba(147,51,234,0.3)]",
-    medium:
-      "bg-gradient-to-r from-yellow-500 to-orange-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]",
-    low: "bg-gradient-to-r from-green-500 to-green-600 shadow-[0_0_15px_rgba(16,185,129,0.3)]",
-  };
-  return colors[priority as keyof typeof colors] || colors.low;
+const formatEstimate = (hours: number): string => {
+  if (hours >= 24) {
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    if (remainingHours > 0) {
+      return `${days}d ${remainingHours}h`;
+    }
+    return `${days}d`;
+  }
+  return `${hours}h`;
 };
 
 const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [isMenu, setIsMenu] = useState(false);
   const { formatDate } = useTimezone();
 
@@ -47,13 +50,25 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
     [task.estimate]
   );
 
+  const formattedEstimate = useMemo(() => {
+    if (!hasEstimate) return null;
+    return formatEstimate(task.estimate!);
+  }, [hasEstimate, task.estimate]);
+
+  const hasProgress = useMemo(
+    () => task.progress !== undefined,
+    [task.progress]
+  );
+
   const hasAI = useMemo(() => !!task?.ai, [task.ai]);
 
   // Memoize click handler
   const handleCardClick = useCallback(() => {
     dispatch(appActions.setClickTask(task));
+    dispatch(appActions.setCurrentTaskId(task._id!));
     dispatch(appActions.setTaskDrawer(true));
-  }, [dispatch, task]);
+    navigate("task/" + task._id);
+  }, [dispatch, navigate, task]);
 
   // Memoize tag rendering
   const tagElements = useMemo(
@@ -148,22 +163,31 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
         <div className="flex flex-wrap gap-2 mb-4">{tagElements}</div>
       )}
 
-      {hasEstimate && (
+      {hasProgress && (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs dark:text-gray-400 text-gray-700">
-              estimate
+              Progress
             </span>
             <span className="text-xs text-cyan-400 font-medium">
-              {task.estimate}%
+              {task.progress}%
             </span>
           </div>
           <div className="w-full bg-gray-800 rounded-full h-2">
             <div
               className="bg-gradient-to-r from-cyan-500 to-violet-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${task.estimate}%` }}
+              style={{ width: `${task.progress}%` }}
             ></div>
           </div>
+        </div>
+      )}
+
+      {hasEstimate && (
+        <div className="flex items-center space-x-2 mb-4">
+          <Clock className="h-3 w-3 dark:text-blue-400 text-blue-600" />
+          <span className="text-xs dark:text-blue-400 text-blue-600 font-medium">
+            Est: {formattedEstimate}
+          </span>
         </div>
       )}
 

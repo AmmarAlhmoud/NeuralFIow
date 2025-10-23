@@ -14,7 +14,7 @@ import type {
 import { useDispatch } from "react-redux";
 import { appActions } from "../../store/appSlice";
 import { CustomSelectInput } from "../ui/CustomSelectInput";
-import { isAssigneeArray } from "../Utils/helperFuns";
+import { isAssigneeArray } from "../../utils/helperFuns";
 import DateTimePicker from "../ui/DateTimePicker";
 
 interface TaskModalProps {
@@ -42,6 +42,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     status: initialData?.status || "todo",
     dueDate: initialData?.dueDate || null,
     estimate: initialData?.estimate,
+    progress: initialData?.progress,
     tags: initialData?.tags || [],
     order: initialData?.order || 6,
     createdBy: initialData?.createdBy || "",
@@ -62,6 +63,27 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     if (!data.title.trim()) {
       toast.error("Task title is required");
       return;
+    }
+
+    if (data.estimate) {
+      const estimateNumber = Number(data.estimate);
+      if (isNaN(estimateNumber) || estimateNumber <= 0) {
+        toast.error("Please enter a valid number for estimated hours");
+        return;
+      }
+      data = { ...data, estimate: estimateNumber };
+    }
+    if (data.progress) {
+      const progressNumber = Number(data.progress);
+      if (isNaN(progressNumber) || progressNumber <= 0) {
+        toast.error("Please enter a valid number for progress");
+        return;
+      }
+      if (progressNumber < 1 || progressNumber > 100) {
+        toast.error("Please enter a number between 1 and 100 for progress");
+        return;
+      }
+      data = { ...data, progress: progressNumber };
     }
 
     if (isAssigneeArray(data.assignees)) {
@@ -388,22 +410,56 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             />
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <label
-              className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
-              title="Due Date (Optional)"
-            >
-              Due Date
-            </label>
-            <DateTimePicker
-              value={formData.dueDate ? new Date(formData.dueDate) : null}
-              onChange={(newDate) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  dueDate: newDate || null,
-                }))
-              }
-            />
+          <div className="flex gap-2">
+            <div className="flex-1 flex flex-col space-y-1">
+              <label
+                className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+                title="Due Date (Optional)"
+              >
+                Due Date
+              </label>
+              <DateTimePicker
+                value={formData.dueDate ? new Date(formData.dueDate) : null}
+                onChange={(newDate) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    dueDate: newDate || null,
+                  }))
+                }
+              />
+            </div>
+            <div className="flex-0.5">
+              <label
+                className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+                title="Estimate (Optional)"
+              >
+                Estimate (h)
+              </label>
+              <Input
+                type="text"
+                name="estimate"
+                className="!w-22 !h-12"
+                placeholder="e.g., 3h"
+                value={formData.estimate}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="flex-0.5">
+              <label
+                className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+                title="Progress (Optional)"
+              >
+                Progress (%)
+              </label>
+              <Input
+                type="text"
+                name="progress"
+                className="!w-24 !h-12"
+                placeholder="e.g., 50%"
+                value={formData.progress}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
           <Button type="submit" size="lg-full">
             {initialData ? "Update Task" : "Create Task"}

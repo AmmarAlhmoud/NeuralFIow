@@ -33,7 +33,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
 
   if (tasks !== undefined && tasks?.length === 0) {
     tasksList = (
-      <div className="text-lg min-h-38 mt-36 text-gray-700 dark:text-gray-500 text-center">
+      <div className="min-h-66 mt-50 text-md font-semibold text-center">
         No tasks available
       </div>
     );
