@@ -14,6 +14,7 @@ import { Outlet } from "react-router-dom";
 import { ProjectModal } from "../components/Dashboard/ProjectModal";
 import type { RootState } from "../store/store";
 import { appActions } from "../store/appSlice";
+import { ConfirmationModal } from "../components/ui/ConfirmationModal";
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,10 +27,18 @@ const MainPage: React.FC = () => {
   const [workspacesModal, setWorkspacesModal] = useState(false);
   const [workspacesData, setWorkspacesData] = useState<Workspace | null>();
   const [projectData, setProjectData] = useState<Project | null>();
+  const [updateProjectData, setUpdateProjectData] = useState<Project | null>();
+  const [deleteAction, setDeleteAction] = useState<boolean>(false);
 
   // App wide state
   const projectModal = useSelector(
     (state: RootState) => state.app.projectModal
+  );
+  const selectedProject = useSelector(
+    (state: RootState) => state.app.clickProject
+  );
+  const isConfirmationModal = useSelector(
+    (state: RootState) => state.app.isConfirmationModal
   );
 
   const getCurrentPage = (): PageType => {
@@ -82,13 +91,27 @@ const MainPage: React.FC = () => {
     setWorkspacesData(formData);
   };
 
-  const createProjectHandler = (formData: Project) => {
+  const projectInfoHandler = (formData: Project, type: "create" | "update") => {
     if (!user) {
       toast.error("Failed to create project try again");
       return;
     }
 
-    setProjectData(formData);
+    if (workspaceId && type === "create") {
+      setProjectData(formData);
+      return;
+    }
+
+    if (workspaceId && type === "update") {
+      setUpdateProjectData(formData);
+      return;
+    }
+
+    if (workspaceId && type === "create") {
+      toast.error("Failed to create Project. Please try again.");
+    } else {
+      toast.error("Failed to update Project. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -151,6 +174,49 @@ const MainPage: React.FC = () => {
         toast.error("Failed to create project. Please try again.");
       }
     };
+    const updateProject = async (project: Project) => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/projects/${project._id}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(project),
+          }
+        );
+
+        const data = await res.json();
+
+        if (res.status === 404 || res.status === 400 || res.status === 403) {
+          toast.error(data.message);
+          return;
+        }
+
+        toast.success("Project updated successfully!");
+      } catch (_) {
+        toast.error("Failed to update project. Please try again.");
+      }
+    };
+    const deleteProject = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/projects/${
+            selectedProject?._id
+          }?workspaceId=${workspaceId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        dispatch(appActions.setClickProject(null));
+        toast.success("Project deleted successfully!");
+      } catch (_) {
+        toast.error("Failed to delete project. Please try again.");
+      }
+    };
 
     if (workspacesData) {
       createWorkspace(workspacesData);
@@ -161,6 +227,17 @@ const MainPage: React.FC = () => {
       createProject(projectData);
       setProjectData(null);
     }
+
+    if (updateProjectData) {
+      updateProject(updateProjectData);
+      setUpdateProjectData(null);
+    }
+
+    if (deleteAction && selectedProject) {
+      deleteProject();
+      setDeleteAction(false);
+    }
+
     if (user && !workspacesData) {
       getWorkspaces();
     }
@@ -181,6 +258,9 @@ const MainPage: React.FC = () => {
     navigate,
     workspaces?.length,
     currentPage,
+    updateProjectData,
+    deleteAction,
+    selectedProject,
   ]);
 
   return (
@@ -248,7 +328,22 @@ const MainPage: React.FC = () => {
         />
       )}
       {projectModal && (
-        <ProjectModal isOpen={projectModal} onSubmit={createProjectHandler} />
+        <ProjectModal
+          initialData={selectedProject}
+          isOpen={projectModal}
+          onSubmit={projectInfoHandler}
+        />
+      )}
+      {isConfirmationModal && (
+        <ConfirmationModal
+          isOpen={isConfirmationModal}
+          action={() => setDeleteAction(true)}
+          title={"Confirmation"}
+          message={
+            "This action will permanently delete the project and all its tasks. This cannot be undone."
+          }
+          type="project"
+        />
       )}
     </div>
   );

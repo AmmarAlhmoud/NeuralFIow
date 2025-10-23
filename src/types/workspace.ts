@@ -62,6 +62,7 @@ export interface Task {
   status: "todo" | "in_progress" | "done";
   dueDate?: Date | null;
   estimate?: number;
+  progress?: number;
   tags: string[];
   attachments?: {
     url?: string;
@@ -73,6 +74,8 @@ export interface Task {
     summary?: string;
     suggestedSubtasks?: string[];
     suggestedPriority?: "low" | "medium" | "high" | "critical";
+    priorityReason?: string;
+    generationOrder?: string[];
     lastProcessed?: Date;
   };
   createdBy?: string;
@@ -80,10 +83,20 @@ export interface Task {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
 export interface Assignee {
   _id?: string;
   name: string;
   email: string;
   avatarURL: string;
+}
+export interface AICompletedData {
+  type: "summary" | "subtasks" | "priority";
+  taskId: string;
+  data: {
+    summary?: string;
+    subtasks?: string[];
+    priority?: string;
+    reason?: string;
+    lastProcessed: Date;
+  };
 }

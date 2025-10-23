@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { type Task, type Workspace } from "../types/workspace";
 import TaskList from "../components/Dashboard/TaskList";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,11 +10,13 @@ import toast from "react-hot-toast";
 import TaskDrawer from "../components/Dashboard/TaskDrawer";
 import { appActions } from "../store/appSlice";
 import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import { socket } from "../utils/socket";
+import { useAIResults } from "../hooks/useAIResults";
 
 const ProjectPage: React.FC = () => {
   const { user } = useAuthContext();
   const dispatch = useDispatch();
-  const { workspaceId, projectId } = useParams();
+  const { workspaceId, projectId, taskId } = useParams();
 
   const [workspace, setWorkspace] = useState<Workspace | null>();
 
@@ -25,6 +27,9 @@ const ProjectPage: React.FC = () => {
   );
   const isConfirmationModal = useSelector(
     (state: RootState) => state.app.isConfirmationModal
+  );
+  const currentTaskId = useSelector(
+    (state: RootState) => state.app.currentTaskId
   );
   const [tasks, setTasks] = useState<Task[] | undefined>([]);
   const [taskData, setTaskData] = useState<Task | null>();
@@ -57,57 +62,6 @@ const ProjectPage: React.FC = () => {
       toast.error("Failed to update Task. Please try again.");
     }
   };
-
-  // Mock Data
-  // const tasks: Task[] = [
-  //   {
-  //     id: "1",
-  //     title: "AI Content Strategy",
-  //     description:
-  //       "Develop comprehensive AI-driven content strategy for Q1 2025 marketing campaigns",
-  //     status: "todo",
-  //     priority: "high",
-  //     tags: ["Strategy", "AI-Generated"],
-  //     assignees: ["violet", "cyan", "green"],
-  //     dueDate: "Dec 28",
-  //     isAiOptimized: true,
-  //   },
-  //   {
-  //     id: "2",
-  //     title: "User Research Analysis",
-  //     description:
-  //       "Analyze user feedback and behavioral data to identify key improvement areas",
-  //     status: "todo",
-  //     priority: "medium",
-  //     tags: ["Research", "Data Analysis"],
-  //     assignees: ["green", "orange"],
-  //     dueDate: "Jan 5",
-  //   },
-  //   {
-  //     id: "3",
-  //     title: "Neural API Integration",
-  //     description:
-  //       "Integrate advanced AI models for automated task prioritization and workflow optimization",
-  //     status: "inprogress",
-  //     priority: "high",
-  //     tags: ["Development", "AI/ML"],
-  //     assignees: ["cyan", "violet"],
-  //     dueDate: "Dec 30",
-  //     progress: 73,
-  //     isAiOptimized: true,
-  //   },
-  //   {
-  //     id: "4",
-  //     title: "Dashboard UI Redesign",
-  //     description:
-  //       "Complete redesign of the main dashboard with modern glassmorphism UI",
-  //     status: "done",
-  //     priority: "low",
-  //     tags: ["Design", "Completed"],
-  //     assignees: ["violet"],
-  //     dueDate: "Completed Dec 20",
-  //   },
-  // ];
 
   useEffect(() => {
     const getTasks = async () => {
@@ -228,6 +182,63 @@ const ProjectPage: React.FC = () => {
     deleteAction,
   ]);
 
+  // Subscribe to project room
+  useEffect(() => {
+    if (projectId) {
+      socket.emit("subscribe", { type: "project", id: projectId });
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    if (currentTaskId) {
+      dispatch(appActions.setTaskDrawer(true));
+    }
+  }, [currentTaskId, dispatch]);
+
+  // Listen for AI results
+  useAIResults(currentTaskId, (data) => {
+    switch (data.type) {
+      case "summary":
+        dispatch(
+          appActions.setClickTask({
+            ...selectedTask!,
+            ai: {
+              ...selectedTask?.ai,
+              summary: data.data.summary,
+              lastProcessed: data.data.lastProcessed,
+            },
+          })
+        );
+        break;
+
+      case "subtasks":
+        dispatch(
+          appActions.setClickTask({
+            ...selectedTask!,
+            ai: { ...selectedTask!.ai, suggestedSubtasks: data.data.subtasks },
+          })
+        );
+        break;
+
+      case "priority":
+        dispatch(
+          appActions.setClickTask({
+            ...selectedTask!,
+            ai: {
+              ...selectedTask!.ai,
+              suggestedPriority: data.data.priority as
+                | "low"
+                | "medium"
+                | "high"
+                | "critical",
+              priorityReason: data.data.reason,
+            },
+          })
+        );
+        break;
+    }
+  });
+
   return (
     <>
       <TaskList tasks={tasks} />
@@ -239,7 +250,9 @@ const ProjectPage: React.FC = () => {
           workspace={workspace || null}
         />
       )}
-      {isTaskDrawer && <TaskDrawer task={selectedTask} isOpen={isTaskDrawer} />}
+      {(isTaskDrawer || taskId) && (
+        <TaskDrawer isOpen={taskId ? true : isTaskDrawer} />
+      )}
       {isConfirmationModal && (
         <ConfirmationModal
           isOpen={isConfirmationModal}

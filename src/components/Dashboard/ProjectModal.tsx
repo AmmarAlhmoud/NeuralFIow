@@ -12,22 +12,25 @@ import { useParams } from "react-router-dom";
 
 interface ProjectModalProps {
   isOpen: boolean;
-  onSubmit: (formData: Project) => void;
+  onSubmit: (formData: Project, type: "create" | "update") => void;
+  initialData?: Project | null;
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({
   isOpen,
   onSubmit,
+  initialData,
 }) => {
   const dispatch = useDispatch();
   const { workspaceId } = useParams();
 
   const [formData, setFormData] = useState<Project>({
-    workspaceId: "",
-    name: "",
-    key: null,
-    description: "",
-    status: "active",
+    _id: initialData?._id || "",
+    workspaceId: initialData?.workspaceId || "",
+    name: initialData?.name || "",
+    key: initialData?.key || null,
+    description: initialData?.description || "",
+    status: initialData?.status || "active",
   });
 
   const generateKey = (name: string): string => {
@@ -81,7 +84,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       key: finalKey,
     };
 
-    onSubmit(data);
+    if (initialData) {
+      onSubmit(data, "update");
+      dispatch(appActions.setProjectModal(false));
+      return;
+    }
+
+    onSubmit(data, "create");
     dispatch(appActions.setProjectModal(false));
   };
 
@@ -92,11 +101,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       <div className="flex flex-col glassmorphic rounded-2xl p-6 max-w-sm w-full  neon-glow animate-fade-in">
         <X
           className="text-dark dark:text-white w-5 h-5 self-end hover:scale-110 transition-transform duration-100 ease-in-out"
-          onClick={() => dispatch(appActions.setProjectModal(false))}
+          onClick={() => {
+            dispatch(appActions.setProjectModal(false));
+            dispatch(appActions.setClickProject(null));
+          }}
         />
-
         <h3 className="text-2xl text-center font-semibold text-dark dark:text-white mb-4">
-          Create Project
+          {initialData ? "Edit Project" : "Create Project"}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6 ">
           <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
@@ -159,7 +170,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           />
 
           <Button type="submit" size="lg-full" className="px-6 py-2">
-            Create Project
+            {initialData ? "Edit Project" : "Create Project"}
           </Button>
         </form>
       </div>

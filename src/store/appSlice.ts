@@ -15,6 +15,7 @@ interface AppState {
   projectsData: Project[] | undefined;
   isTaskModal: boolean | null;
   clickTask: Task | null;
+  clickProject: Project | null;
   isTaskDrawer: boolean | null;
   isConfirmationModal: boolean | null;
   isInviteMembersModal: boolean | null;
@@ -29,6 +30,7 @@ interface AppState {
   deletedNoteId: string | null;
   isMarkAllAsRead: boolean | null;
   isAllNotesDeleted: boolean | null;
+  currentTaskId: string | null;
 }
 
 const initialState: AppState = {
@@ -37,6 +39,7 @@ const initialState: AppState = {
   projectsData: undefined,
   isTaskModal: null,
   clickTask: null,
+  clickProject: null,
   isTaskDrawer: null,
   isConfirmationModal: null,
   isInviteMembersModal: null,
@@ -51,6 +54,7 @@ const initialState: AppState = {
   deletedNoteId: null,
   isMarkAllAsRead: null,
   isAllNotesDeleted: null,
+  currentTaskId: null,
 };
 
 const appSlice = createSlice({
@@ -79,6 +83,9 @@ const appSlice = createSlice({
     },
     setClickTask(state, action: PayloadAction<Task | null>) {
       state.clickTask = action.payload;
+    },
+    setClickProject(state, action: PayloadAction<Project | null>) {
+      state.clickProject = action.payload;
     },
     setTaskDrawer(state, action: PayloadAction<boolean>) {
       state.isTaskDrawer = action.payload;
@@ -127,6 +134,9 @@ const appSlice = createSlice({
     },
     setIsAllNotesDeleted(state, action: PayloadAction<boolean | null>) {
       state.isAllNotesDeleted = action.payload;
+    },
+    setCurrentTaskId(state, action: PayloadAction<string | null>) {
+      state.currentTaskId = action.payload;
     },
   },
 });

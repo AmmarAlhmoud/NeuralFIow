@@ -57,6 +57,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               if (type === "invite") {
                 dispatch(appActions.setInvitationStatus(null));
               }
+              if (type === "project") {
+                dispatch(appActions.setClickProject(null));
+              }
               dispatch(appActions.setIsConfirmationModal(false));
             }}
             variant="social"
@@ -74,7 +77,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             {type === "task" ||
             type === "workspace" ||
             type === "notification" ||
-            type === "notifications"
+            type === "notifications" ||
+            type === "project"
               ? "Delete"
               : type === "invite"
               ? "Decline"

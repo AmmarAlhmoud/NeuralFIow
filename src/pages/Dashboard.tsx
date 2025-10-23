@@ -30,7 +30,7 @@ const DashboardPage: React.FC = () => {
 
   if (projects !== undefined && projects?.length === 0) {
     projectsList = (
-      <div className="text-lg min-h-38 mt-36 text-gray-700 dark:text-gray-500 text-center">
+      <div className="min-h-66 mt-50 text-md font-semibold text-center">
         No projects available
       </div>
     );
