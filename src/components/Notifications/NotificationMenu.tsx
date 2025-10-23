@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import NotificationItem from "./NotificationsItem";
 import type { NotificationInter } from "../../types/notification";
-import { getColorForIndex } from "../Utils/helperFuns";
+import { getColorForIndex } from "../../utils/helperFuns";
 import { NavLink } from "react-router-dom";
 
 interface NotificationProps {
