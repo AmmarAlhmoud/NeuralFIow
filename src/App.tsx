@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import { TimezoneProvider } from "./context/TimezoneProvider";
 import { onAuthStateChanged } from "firebase/auth";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { X, Check } from "lucide-react";
 import type { AuthUser } from "./types/auth";
 import { signOut } from "./firebase/auth";
@@ -23,6 +23,8 @@ import Loading from "./components/ui/Loading";
 import { appActions } from "./store/appSlice";
 import ProfilePage from "./pages/Profile";
 import NotificationPage from "./pages/Notification";
+import { connectSocket, disconnectSocket, socket } from "./utils/socket";
+import type { AICompletedData } from "./types/workspace";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
       },
       {
         path: "workspace/:workspaceId/project/:projectId",
+        element: <ProjectsPage />,
+      },
+      {
+        path: "workspace/:workspaceId/project/:projectId/task/:taskId",
         element: <ProjectsPage />,
       },
       { path: "workspace/:workspaceId/analytics", element: <AnalyticsPage /> },
@@ -109,8 +115,10 @@ const App: React.FC = () => {
           provider: firebaseUser.providerData[0].providerId,
         };
         setUser(authUser);
+        connectSocket();
       } else {
         setUser(null);
+        disconnectSocket();
       }
       setLoading(false);
     });
@@ -143,6 +151,34 @@ const App: React.FC = () => {
     const interval = setInterval(checkSession, 30 * 1000);
     return () => clearInterval(interval);
   }, [logoutHandler]);
+
+  // Listen for AI results
+  useEffect(() => {
+    const handleAIComplete = (data: AICompletedData) => {
+      switch (data.type) {
+        case "summary":
+          toast.dismiss("ai-summary");
+          toast.success("✨ Summary ready!");
+          break;
+        case "subtasks":
+          toast.dismiss("ai-subtasks");
+          toast.success("📝 Subtasks ready!");
+          break;
+        case "priority":
+          toast.dismiss("ai-priority");
+          toast.success("🚦 Priority ready!");
+          break;
+        default:
+          break;
+      }
+    };
+
+    socket.on("ai:completed", handleAIComplete);
+
+    return () => {
+      socket.off("ai:completed", handleAIComplete);
+    };
+  }, []);
 
   useEffect(() => {
     if (isLogout) {
