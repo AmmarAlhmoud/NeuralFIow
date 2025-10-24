@@ -11,6 +11,9 @@ import { type RootState } from "../store/store";
 const DashboardPage: React.FC = () => {
   const dispatch = useDispatch();
   const projects = useSelector((state: RootState) => state.app.projectsData);
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   const columns = [
     { id: "active", title: "Active", color: "bg-green-500" },
@@ -131,15 +134,17 @@ const DashboardPage: React.FC = () => {
               AI-powered task management with intelligent prioritization
             </p>
           </div>
-          <Button
-            type="button"
-            variant="gradient"
-            className="flex space-x-2 px-4 py-0"
-            onClick={() => dispatch(appActions.setProjectModal(true))}
-          >
-            <Plus />
-            <span>Create Project</span>
-          </Button>
+          {(currentUserRole === "admin" || currentUserRole === "manager") && (
+            <Button
+              type="button"
+              variant="gradient"
+              className="flex space-x-2 px-4 py-0"
+              onClick={() => dispatch(appActions.setProjectModal(true))}
+            >
+              <Plus />
+              <span>Create Project</span>
+            </Button>
+          )}
         </div>
 
         {projectsList}

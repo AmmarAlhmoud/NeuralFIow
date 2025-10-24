@@ -7,7 +7,7 @@ import ScrollToTop from "../components/ui/ScrollToTop";
 import Header from "../components/Dashboard/Header";
 import HomePage from "./Home";
 import type { PageType } from "../types/dashboard";
-import type { Project, Workspace } from "../types/workspace";
+import type { Project, TeamMember, Workspace } from "../types/workspace";
 import { WorkspaceModal } from "../components/Dashboard/WorkspaceModal";
 import { useAuthContext } from "../hooks/useAuth";
 import { Outlet } from "react-router-dom";
@@ -15,6 +15,7 @@ import { ProjectModal } from "../components/Dashboard/ProjectModal";
 import type { RootState } from "../store/store";
 import { appActions } from "../store/appSlice";
 import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import type { Role } from "../types/auth";
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -124,6 +125,22 @@ const MainPage: React.FC = () => {
         setWorkspaces(data.data);
       } catch (error) {
         console.error("Error fetching workspaces:", error);
+      }
+    };
+    const getCurrentUserRole = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        const teamMembers: TeamMember[] | undefined = data.data?.members;
+        const me = teamMembers?.find((m) => m?.uid?.uid === user?.uid);
+        dispatch(appActions.setCurrentUserRole(me?.role as Role) ?? "viewer");
+      } catch (error) {
+        console.error("Error fetching workspace:", error);
       }
     };
     const createWorkspace = async (workspace: Workspace) => {
@@ -248,6 +265,7 @@ const MainPage: React.FC = () => {
 
     if (user && workspaceId) {
       getProjects();
+      getCurrentUserRole();
     }
   }, [
     user,
@@ -265,7 +283,6 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden transition-all duration-500 text-gray-900 dark:text-gray-100">
-      {/* Particle Background */}
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
         {[...Array(9)].map((_, i) => (
           <div
@@ -280,12 +297,10 @@ const MainPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Background Gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-[#b74fd6]/10 via-transparent to-[#d64f4f]/10 pointer-events-none dark:from-violet-500/10 dark:to-cyan-500/10"></div>
 
       <ScrollToTop />
 
-      {/* Sidebar */}
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         currentPage={currentPage}
@@ -295,7 +310,6 @@ const MainPage: React.FC = () => {
         setWorkspacesModal={setWorkspacesModal}
       />
 
-      {/* Main Content */}
       <div
         className={`transition-all duration-500 ${
           isSidebarCollapsed ? "ml-8 md:ml-26" : "hidden md:block md:ml-72"
@@ -319,7 +333,6 @@ const MainPage: React.FC = () => {
           currentPage === "settings") && <Outlet />}
       </div>
 
-      {/* Modal Root */}
       {workspacesModal && (
         <WorkspaceModal
           isOpen={workspacesModal}
@@ -334,7 +347,7 @@ const MainPage: React.FC = () => {
           onSubmit={projectInfoHandler}
         />
       )}
-      {isConfirmationModal && (
+      {isConfirmationModal && selectedProject && (
         <ConfirmationModal
           isOpen={isConfirmationModal}
           action={() => setDeleteAction(true)}

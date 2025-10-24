@@ -4,9 +4,10 @@ import TaskCard from "./TaskCard";
 import { type Task } from "../../types/workspace";
 import { Button } from "../ui/Button";
 import Loading from "../ui/Loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appActions } from "../../store/appSlice";
 import HoverDisabler from "../ui/HoverDisabler";
+import type { RootState } from "../../store/store";
 
 interface TaskListProps {
   tasks: Task[] | undefined;
@@ -14,6 +15,9 @@ interface TaskListProps {
 
 const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   const dispatch = useDispatch();
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   const columns = [
     { id: "todo", title: "To Do", color: "bg-green-500" },
@@ -108,15 +112,17 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
               AI-powered task management with intelligent prioritization
             </p>
           </div>
-          <Button
-            type="button"
-            variant="gradient"
-            className="flex space-x-2 px-4 py-0"
-            onClick={() => dispatch(appActions.setTaskModal(true))}
-          >
-            <Plus />
-            <span>Create Task</span>
-          </Button>
+          {(currentUserRole === "admin" || currentUserRole === "manager") && (
+            <Button
+              type="button"
+              variant="gradient"
+              className="flex space-x-2 px-4 py-0"
+              onClick={() => dispatch(appActions.setTaskModal(true))}
+            >
+              <Plus />
+              <span>Create Task</span>
+            </Button>
+          )}
         </div>
 
         {tasksList}

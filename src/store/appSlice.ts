@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import {
-  type UserProfileSettings,
-  type Project,
-  type Task,
-  type TeamMember,
-  type WorkspaceFormSettings,
+import type {
+  UserProfileSettings,
+  Project,
+  Task,
+  TeamMember,
+  WorkspaceFormSettings,
+  Comment,
 } from "../types/workspace";
 import type { AuthUser } from "../types/auth";
 import type { InvitationStatus } from "../types/notification";
@@ -31,6 +32,9 @@ interface AppState {
   isMarkAllAsRead: boolean | null;
   isAllNotesDeleted: boolean | null;
   currentTaskId: string | null;
+  postComment: Comment | null;
+  tryFetch: boolean | null;
+  currentUserRole: string | null;
 }
 
 const initialState: AppState = {
@@ -55,6 +59,9 @@ const initialState: AppState = {
   isMarkAllAsRead: null,
   isAllNotesDeleted: null,
   currentTaskId: null,
+  postComment: null,
+  tryFetch: null,
+  currentUserRole: "viewer",
 };
 
 const appSlice = createSlice({
@@ -137,6 +144,15 @@ const appSlice = createSlice({
     },
     setCurrentTaskId(state, action: PayloadAction<string | null>) {
       state.currentTaskId = action.payload;
+    },
+    setPostComment(state, action: PayloadAction<Comment | null>) {
+      state.postComment = action.payload;
+    },
+    setTryFetch(state, action: PayloadAction<boolean | null>) {
+      state.tryFetch = action.payload;
+    },
+    setCurrentUserRole(state, action: PayloadAction<string | null>) {
+      state.currentUserRole = action.payload;
     },
   },
 });

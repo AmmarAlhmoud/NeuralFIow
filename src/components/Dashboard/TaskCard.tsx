@@ -1,8 +1,8 @@
 import React, { memo, useMemo, useCallback, useState } from "react";
 import { type Task } from "../../types/workspace";
 import { isAssigneeArray } from "../../utils/helperFuns";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
 import { appActions } from "../../store/appSlice";
 import { Menu, Trash, Pencil, Clock } from "lucide-react";
 import useTimezone from "../../hooks/useTimezone";
@@ -29,6 +29,9 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
   const navigate = useNavigate();
   const [isMenu, setIsMenu] = useState(false);
   const { formatDate } = useTimezone();
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   const priorityColor = useMemo(
     () => getPriorityColor(task.priority),
@@ -115,41 +118,45 @@ const TaskCard: React.FC<TaskCardProps> = memo(({ task }) => {
           className={`absolute bottom-2 right-2 w-3 h-3 rounded-full ${priorityColor}`}
           title={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
         ></div>
-        <Menu
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMenu((prev) => !prev);
-          }}
-          className="absolute h-5 w-5 z-20 top-2 right-2 text-black dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
-        />
+        {(currentUserRole === "admin" || currentUserRole === "manager") && (
+          <div>
+            <Menu
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenu((prev) => !prev);
+              }}
+              className="absolute h-5 w-5 z-20 top-2 right-2 text-black dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
+            />
 
-        {isMenu && (
-          <ul className="absolute top-6 right-7 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in">
-            <li
-              onClick={(e) => {
-                e.stopPropagation();
-                dispatch(appActions.setClickTask(task));
-                dispatch(appActions.setTaskModal(true));
-                setIsMenu((prev) => !prev);
-              }}
-              className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-            >
-              <Pencil className="h-4.5 w-4.5 text-yellow-600  cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
-              <span>Edit</span>
-            </li>
-            <li
-              onClick={(e) => {
-                e.stopPropagation();
-                dispatch(appActions.setClickTask(task));
-                dispatch(appActions.setIsConfirmationModal(true));
-                setIsMenu((prev) => !prev);
-              }}
-              className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-600/30 cursor-pointer transition-colors"
-            >
-              <Trash className="h-4.5 w-4.5 text-red-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
-              <span>Delete</span>
-            </li>
-          </ul>
+            {isMenu && (
+              <ul className="absolute top-6 right-7 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in">
+                <li
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(appActions.setClickTask(task));
+                    dispatch(appActions.setTaskModal(true));
+                    setIsMenu((prev) => !prev);
+                  }}
+                  className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                >
+                  <Pencil className="h-4.5 w-4.5 text-yellow-600  cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
+                  <span>Edit</span>
+                </li>
+                <li
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(appActions.setClickTask(task));
+                    dispatch(appActions.setIsConfirmationModal(true));
+                    setIsMenu((prev) => !prev);
+                  }}
+                  className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-600/30 cursor-pointer transition-colors"
+                >
+                  <Trash className="h-4.5 w-4.5 text-red-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
+                  <span>Delete</span>
+                </li>
+              </ul>
+            )}
+          </div>
         )}
       </div>
 

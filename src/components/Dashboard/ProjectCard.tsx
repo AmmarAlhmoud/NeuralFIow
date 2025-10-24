@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { type Project } from "../../types/workspace";
 import { NavLink } from "react-router-dom";
 import { Menu, Pencil, Trash } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appActions } from "../../store/appSlice";
+import type { RootState } from "../../store/store";
+import useTimezone from "../../hooks/useTimezone";
 
 export interface ProjectCardProps {
   project: Project;
@@ -20,8 +22,12 @@ const getStatusColor = (status: string) => {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const dispatch = useDispatch();
+  const { formatDate } = useTimezone();
   const [isMenu, setIsMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -47,52 +53,54 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           <h4 className="text-lg font-semibold dark:text-white text-black">
             {project.name}
           </h4>
-          <div ref={menuRef}>
-            <Menu
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsMenu((prev) => !prev);
-              }}
-              className="absolute h-5 w-5 z-20 top-2 right-2 text-black dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
-            />
-            {isMenu && (
-              <ul
+          {(currentUserRole === "admin" || currentUserRole === "manager") && (
+            <div ref={menuRef}>
+              <Menu
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  setIsMenu((prev) => !prev);
                 }}
-                className="absolute top-6 right-7 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in"
-              >
-                <li
+                className="absolute h-5 w-5 z-20 top-2 right-2 text-black dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
+              />
+              {isMenu && (
+                <ul
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    dispatch(appActions.setClickProject(project));
-                    dispatch(appActions.setProjectModal(true));
-                    setIsMenu(false);
                   }}
-                  className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                  className="absolute top-6 right-7 w-36 rounded-lg rounded-tr-none shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 overflow-hidden animate-fade-in"
                 >
-                  <Pencil className="h-4.5 w-4.5 text-yellow-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
-                  <span>Edit</span>
-                </li>
-                <li
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dispatch(appActions.setClickProject(project));
-                    dispatch(appActions.setIsConfirmationModal(true));
-                    setIsMenu(false);
-                  }}
-                  className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-600/30 cursor-pointer transition-colors"
-                >
-                  <Trash className="h-4.5 w-4.5 text-red-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
-                  <span>Delete</span>
-                </li>
-              </ul>
-            )}
-          </div>
+                  <li
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      dispatch(appActions.setClickProject(project));
+                      dispatch(appActions.setProjectModal(true));
+                      setIsMenu(false);
+                    }}
+                    className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                  >
+                    <Pencil className="h-4.5 w-4.5 text-yellow-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
+                    <span>Edit</span>
+                  </li>
+                  <li
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      dispatch(appActions.setClickProject(project));
+                      dispatch(appActions.setIsConfirmationModal(true));
+                      setIsMenu(false);
+                    }}
+                    className="flex space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-600/30 cursor-pointer transition-colors"
+                  >
+                    <Trash className="h-4.5 w-4.5 text-red-600 cursor-pointer hover:scale-110 transition-transform duration-150 ease-in-out" />
+                    <span>Delete</span>
+                  </li>
+                </ul>
+              )}
+            </div>
+          )}
         </div>
 
         <p className="text-sm text-gray-700 dark:text-gray-400 mb-4">
@@ -104,11 +112,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
 
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
-            Created by: {project.createdBy?.name || "Unknown"}
+          <span
+            title={project.createdBy?.name || "Unknown"}
+            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full"
+          >
+            Created by:{" "}
+            {project.createdBy?.name?.length &&
+            project.createdBy?.name?.length > 16
+              ? project.createdBy?.name.slice(0, 16) + "..."
+              : project.createdBy?.name || "Unknown"}
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
-            {new Date(project.createdAt!).toLocaleDateString()}
+            {formatDate(project?.createdAt || new Date()).split("/")[0]}
           </span>
         </div>
         <div
