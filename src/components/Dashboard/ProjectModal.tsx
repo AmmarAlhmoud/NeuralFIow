@@ -9,6 +9,7 @@ import type { Project } from "../../types/workspace";
 import { Textarea } from "../ui/Textarea";
 import { appActions } from "../../store/appSlice";
 import { useParams } from "react-router-dom";
+import { CustomSelectInput } from "../ui/CustomSelectInput";
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -68,6 +69,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       return;
     }
 
+    if (formData.name.trim().length < 3) {
+      toast.error("Project name must contain at least 3 characters");
+      return;
+    }
+
     if (!workspaceId) {
       toast.error("Something went wrong, please try again later.");
       return;
@@ -77,6 +83,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     const finalKey = formData.key?.trim()
       ? formData.key.toUpperCase()
       : generateKey(formData.name);
+
+    if (finalKey.trim().length < 3) {
+      toast.error("Project key must contain at least 3 characters");
+      return;
+    }
 
     const data: Project = {
       ...formData,
@@ -94,6 +105,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     dispatch(appActions.setProjectModal(false));
   };
 
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "archived", label: "Archived" },
+    { value: "completed", label: "Completed" },
+  ];
+
   if (!isOpen) return null;
 
   const modalContent = (
@@ -109,9 +126,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         <h3 className="text-2xl text-center font-semibold text-dark dark:text-white mb-4">
           {initialData ? "Edit Project" : "Create Project"}
         </h3>
-        <form onSubmit={handleSubmit} className="space-y-6 ">
-          <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
-            Project Name
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label
+            className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300"
+            title="Project Name (Mandatory)"
+          >
+            Project Name <span className="text-red-500">*</span>
           </label>
           <Input
             type="text"
@@ -126,8 +146,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             }
           />
 
-          <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
-            Project Key (Optional)
+          <label
+            className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300"
+            title="Project Key (Optional)"
+          >
+            Project Key
           </label>
           <Input
             type="text"
@@ -153,8 +176,29 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             </p>
           )}
 
-          <label className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300">
-            Project Description (Optional)
+          <label
+            className="text-sm ml-1 font-medium text-gray-700 dark:text-gray-300"
+            title="Status (Optional)"
+          >
+            Status
+          </label>
+          <CustomSelectInput
+            value={formData.status}
+            onChange={(v) =>
+              setFormData((prev) => ({
+                ...prev,
+                status: v as "active" | "archived" | "completed",
+              }))
+            }
+            options={statusOptions}
+            isMulti={false}
+          />
+
+          <label
+            className="text-sm ml-1 text-left font-medium text-gray-700 dark:text-gray-300"
+            title="Project Description (Optional)"
+          >
+            Project Description
           </label>
           <Textarea
             className="min-h-[100px] mt-1"

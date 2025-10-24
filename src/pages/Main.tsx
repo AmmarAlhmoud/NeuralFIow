@@ -206,12 +206,12 @@ const MainPage: React.FC = () => {
         );
 
         const data = await res.json();
-
         if (res.status === 404 || res.status === 400 || res.status === 403) {
           toast.error(data.message);
           return;
         }
 
+        dispatch(appActions.setClickProject(null));
         toast.success("Project updated successfully!");
       } catch (_) {
         toast.error("Failed to update project. Please try again.");
@@ -219,7 +219,7 @@ const MainPage: React.FC = () => {
     };
     const deleteProject = async () => {
       try {
-        const res = await fetch(
+        await fetch(
           `${import.meta.env.VITE_API_URL}/projects/${
             selectedProject?._id
           }?workspaceId=${workspaceId}`,
