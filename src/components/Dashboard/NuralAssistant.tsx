@@ -1,5 +1,6 @@
 import React from "react";
 import { Star } from "lucide-react";
+import useTimezone from "../../hooks/useTimezone";
 
 interface NuralAssistantProps {
   type: "summary" | "subtasks" | "priority";
@@ -14,6 +15,8 @@ const NuralAssistant: React.FC<NuralAssistantProps> = ({
   reason,
   lastProcessed,
 }) => {
+  const { formatDate } = useTimezone();
+
   return (
     <div className="flex space-x-3">
       <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
@@ -29,13 +32,7 @@ const NuralAssistant: React.FC<NuralAssistantProps> = ({
               AI
             </span>
             <span className="text-xs dark:text-gray-400 text-gray-800">
-              {new Date(lastProcessed || Date.now()).toLocaleTimeString(
-                "en-US",
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )}
+              {formatDate(lastProcessed || new Date()).split("/")[1]}
             </span>
           </div>
           <div className="text-sm dark:text-gray-300 text-gray-700">

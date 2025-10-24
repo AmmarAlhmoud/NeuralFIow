@@ -100,3 +100,14 @@ export interface AICompletedData {
     lastProcessed: Date;
   };
 }
+
+export interface Comment {
+  _id?: string;
+  taskId: string;
+  authorId?: AuthUser;
+  body: string | null;
+  mentions?: string[];
+  createdAt?: string | null;
+  isEdited?: boolean | null;
+  editedAt?: Date | null;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
 import { X, FileText, Plus, Zap } from "lucide-react";
 import type { AppDispatch, RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +6,9 @@ import { appActions } from "../../store/appSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import NuralAssistant from "./NuralAssistant";
+import CommentItem from "./CommentItem";
+import { Button } from "../ui/Button";
+import type { Comment } from "../../types/workspace";
 
 interface TaskDrawerProps {
   isOpen: boolean | null;
@@ -16,6 +19,9 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const selectedTask = useSelector((state: RootState) => state.app.clickTask);
+  const postCommentRef = useRef<HTMLTextAreaElement>(null);
+  const [commnets, setComments] = useState<Comment[] | null>();
+  const tryFetch = useSelector((state: RootState) => state.app.tryFetch);
 
   useEffect(() => {
     if (isOpen) {
@@ -54,11 +60,29 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
         console.error("Error fetching workspaces:", error);
       }
     };
+    const getComments = async () => {
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/comments/by-task/${taskId}?workspaceId=${workspaceId}`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        setComments(data.data);
+        dispatch(appActions.setTryFetch(false));
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
 
-    if (taskId) {
+    if (taskId || tryFetch) {
       getTask();
+      getComments();
     }
-  }, [dispatch, projectId, taskId, workspaceId]);
+  }, [dispatch, projectId, taskId, tryFetch, workspaceId]);
 
   const handleGenerateSummary = async () => {
     if (!taskId) return;
@@ -114,6 +138,26 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
     }
   };
 
+  const postCommentHandler = (e: FormEvent) => {
+    e.preventDefault();
+
+    const data: Comment = {
+      taskId: taskId || "",
+      body: postCommentRef?.current?.value || "",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (data.body?.length === 0) {
+      toast.error("Please enter a message before posting your comment.");
+      return;
+    }
+
+    dispatch(appActions.setPostComment(data));
+    if (postCommentRef.current) {
+      postCommentRef.current.value = "";
+    }
+  };
+
   if (!selectedTask) return null;
 
   return (
@@ -160,12 +204,11 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
               </h3>
               <div className="dark:bg-white/5 bg-black/5 rounded-xl p-4 border dark:border-white/10 border-black/10">
                 <p className="dark:text-gray-300 text-gray-700 leading-relaxed">
-                  {selectedTask.description}
+                  {selectedTask.description || "No description available"}
                 </p>
               </div>
             </div>
 
-            {/* AI Actions */}
             <div>
               <h3 className="font-semibold dark:text-white text-gray-700 mb-4">
                 AI Neural Assistant
@@ -206,33 +249,12 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
               </div>
             </div>
 
-            {/* Comments Thread */}
-            <div>
+            <div className="space-y-4">
               <h3 className="font-semibold dark:text-white text-black mb-4">
                 Neural Comments
               </h3>
-              <div className="space-y-4">
-                <div className="flex space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-neon-scarlet to-neon-fuchsia rounded-full flex-shrink-0"></div>
-                  <div className="flex-1">
-                    <div className="dark:bg-white/5 bg-black/5 rounded-xl p-4 border dark:border-white/10 border-black/10">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <span className="font-medium dark:text-white text-black text-sm">
-                          Alex Chen
-                        </span>
-                        <span className="text-xs dark:text-gray-400 text-gray-800">
-                          2 hours ago
-                        </span>
-                      </div>
-                      <p className="text-sm dark:text-gray-300 text-gray-700">
-                        I've started the initial research phase. The AI analysis
-                        suggests focusing on video content for better engagement
-                        rates.
-                      </p>
-                    </div>
-                  </div>
-                </div>
 
+              <div className="space-y-4">
                 {selectedTask.ai?.summary && (
                   <NuralAssistant
                     type="summary"
@@ -262,17 +284,26 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
                 )}
               </div>
 
-              <div className="mt-6">
+              {commnets?.map((comment, index) => (
+                <CommentItem
+                  key={comment?._id}
+                  comment={comment}
+                  index={index}
+                />
+              ))}
+
+              <form onSubmit={postCommentHandler} className="mt-6">
                 <textarea
+                  ref={postCommentRef}
+                  name="comment"
                   placeholder="Add a neural comment..."
                   className="w-full px-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl dark:text-white text-black placeholder-gray-400 resize-none focus:outline-none input-glow"
                   rows={3}
                 ></textarea>
-                <button className="mt-3 relative overflow-hidden bg-gradient-to-r from-neon-scarlet to-neon-fuchsia hover:from-neon-fuchsia hover:to-neon-scarlet text-white px-6 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 group">
-                  <span>Post Comment</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
-              </div>
+                <Button type="submit" variant="gradient" className="mt-2 !py-2">
+                  Post Comment
+                </Button>
+              </form>
             </div>
           </div>
         </div>

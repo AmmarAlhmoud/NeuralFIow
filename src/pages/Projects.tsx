@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { type Task, type Workspace } from "../types/workspace";
+import type { Task, Workspace, Comment } from "../types/workspace";
 import TaskList from "../components/Dashboard/TaskList";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/store";
@@ -31,6 +31,8 @@ const ProjectPage: React.FC = () => {
   const currentTaskId = useSelector(
     (state: RootState) => state.app.currentTaskId
   );
+
+  const postComment = useSelector((state: RootState) => state.app.postComment);
   const [tasks, setTasks] = useState<Task[] | undefined>([]);
   const [taskData, setTaskData] = useState<Task | null>();
   const [updateTaskData, setUpdateTaskData] = useState<Task | null>();
@@ -151,6 +153,25 @@ const ProjectPage: React.FC = () => {
         console.error("Error fetching workspace:", error);
       }
     };
+    const createComment = async (comment: Comment) => {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_API_URL}/comments?workspaceId=${workspaceId}`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(comment),
+          }
+        );
+        dispatch(appActions.setPostComment(null));
+        dispatch(appActions.setTryFetch(true));
+      } catch (_) {
+        toast.error("Failed to post comment. Please try again.");
+      }
+    };
 
     if (taskData) {
       createTask(taskData);
@@ -167,6 +188,10 @@ const ProjectPage: React.FC = () => {
       setDeleteAction(false);
     }
 
+    if (postComment) {
+      createComment(postComment);
+    }
+
     if (user) {
       getTasks();
       getWorkspace();
@@ -180,6 +205,7 @@ const ProjectPage: React.FC = () => {
     updateTaskData,
     selectedTask,
     deleteAction,
+    postComment,
   ]);
 
   // Subscribe to project room
@@ -253,7 +279,7 @@ const ProjectPage: React.FC = () => {
       {(isTaskDrawer || taskId) && (
         <TaskDrawer isOpen={taskId ? true : isTaskDrawer} />
       )}
-      {isConfirmationModal && (
+      {isConfirmationModal && selectedTask && (
         <ConfirmationModal
           isOpen={isConfirmationModal}
           action={() => setDeleteAction(true)}
