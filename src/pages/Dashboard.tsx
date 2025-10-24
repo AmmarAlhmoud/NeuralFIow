@@ -14,6 +14,9 @@ const DashboardPage: React.FC = () => {
   const currentUserRole = useSelector(
     (state: RootState) => state.app.currentUserRole
   );
+  const teamMembersCount = useSelector(
+    (state: RootState) => state.app.teamMembersCount
+  );
 
   const columns = [
     { id: "active", title: "Active", color: "bg-green-500" },
@@ -88,8 +91,12 @@ const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           icon={<Check className="w-6 h-6 text-white" />}
-          value="247"
-          label="Active Tasks"
+          value={
+            projects
+              ?.filter((proj) => proj.status === "active")
+              ?.length.toString() || "0"
+          }
+          label="Active Projects"
           change="+12.5%"
           changeText="vs last week"
           isPositive={true}
@@ -115,7 +122,7 @@ const DashboardPage: React.FC = () => {
         />
         <StatsCard
           icon={<Users className="w-6 h-6 text-white" />}
-          value="24"
+          value={teamMembersCount?.toString() || "0"}
           label="Team Members"
           change="+3 new"
           changeText="this week"

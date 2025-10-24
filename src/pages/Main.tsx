@@ -139,6 +139,7 @@ const MainPage: React.FC = () => {
         const teamMembers: TeamMember[] | undefined = data.data?.members;
         const me = teamMembers?.find((m) => m?.uid?.uid === user?.uid);
         dispatch(appActions.setCurrentUserRole(me?.role as Role) ?? "viewer");
+        dispatch(appActions.setTeamMembersCount(teamMembers?.length || 0));
       } catch (error) {
         console.error("Error fetching workspace:", error);
       }

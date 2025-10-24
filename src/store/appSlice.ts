@@ -35,6 +35,7 @@ interface AppState {
   postComment: Comment | null;
   tryFetch: boolean | null;
   currentUserRole: string | null;
+  teamMembersCount: number | null;
 }
 
 const initialState: AppState = {
@@ -62,6 +63,7 @@ const initialState: AppState = {
   postComment: null,
   tryFetch: null,
   currentUserRole: "viewer",
+  teamMembersCount: 0,
 };
 
 const appSlice = createSlice({
@@ -153,6 +155,9 @@ const appSlice = createSlice({
     },
     setCurrentUserRole(state, action: PayloadAction<string | null>) {
       state.currentUserRole = action.payload;
+    },
+    setTeamMembersCount(state, action: PayloadAction<number | null>) {
+      state.teamMembersCount = action.payload;
     },
   },
 });

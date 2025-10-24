@@ -103,7 +103,6 @@ const Profile: React.FC<ProfileProps> = ({
           )}
         </button>
 
-        {/* Notification */}
         <div
           ref={headerRef}
           className="relative"
@@ -143,7 +142,7 @@ const Profile: React.FC<ProfileProps> = ({
       </div>
 
       <NavLink to="/profile">
-        <div className="w-50 max-w-full flex items-center xl:flex-row space-x-3 p-2 rounded-xlhover:bg-gray-200/10 dark:hover:bg-white/10 cursor-pointer group transition-all overflow-hidden">
+        <div className="w-50 max-w-full flex items-center xl:flex-row space-x-3 p-2 rounded-xlhover:bg-gray-200/10 dark:hover:bg-white/10 cursor-pointer group transition-all overflow-hidden rounded-lg">
           <div className="relative w-10 h-10 transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(183,79,214,0.4)]">
             <img
               src={avatarURL}
