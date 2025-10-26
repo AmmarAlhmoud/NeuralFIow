@@ -9,8 +9,8 @@ import type {
   InvitationStatus,
   NotificationInter,
 } from "../types/notification";
-import Loading from "../components/ui/Loading";
-import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import Loading from "../components/UI/Loading";
+import { ConfirmationModal } from "../components/UI/ConfirmationModal";
 const NotificationPage: React.FC = () => {
   const { user } = useAuthContext();
   const dispatch = useDispatch<AppDispatch>();

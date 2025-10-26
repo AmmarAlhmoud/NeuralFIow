@@ -19,7 +19,7 @@ import SettingsPage from "./pages/Settings";
 import ProtectedRouteWithUser from "./pages/ProtectedRouteWithUser";
 import ProtectedRouteNoUser from "./pages/ProtectedRouteNoUser";
 import AnimatedBackground from "./components/Background/AnimatedBackground";
-import Loading from "./components/ui/Loading";
+import Loading from "./components/UI/Loading";
 import { appActions } from "./store/appSlice";
 import ProfilePage from "./pages/Profile";
 import NotificationPage from "./pages/Notification";

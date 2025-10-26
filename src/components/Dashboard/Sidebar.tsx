@@ -12,9 +12,9 @@ import {
 import type { SidebarProps, PageType } from "../../types/dashboard";
 import Profile from "./Profile";
 import { useAuthContext } from "../../hooks/useAuth";
-import { Button } from "../ui/Button";
+import { Button } from "../UI/Button";
 import WorkspaceItem from "./WorkspaceItem";
-import Loading from "../ui/Loading";
+import Loading from "../UI/Loading";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,

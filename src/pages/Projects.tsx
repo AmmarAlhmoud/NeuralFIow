@@ -9,7 +9,7 @@ import { TaskModal } from "../components/Dashboard/TaskModal";
 import toast from "react-hot-toast";
 import TaskDrawer from "../components/Dashboard/TaskDrawer";
 import { appActions } from "../store/appSlice";
-import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import { ConfirmationModal } from "../components/UI/ConfirmationModal";
 import { socket } from "../utils/socket";
 import { useAIResults } from "../hooks/useAIResults";
 

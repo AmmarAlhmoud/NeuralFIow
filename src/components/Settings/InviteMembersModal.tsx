@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "../UI/Button";
+import { Input } from "../UI/Input";
 import toast from "react-hot-toast";
 import type { TeamMember } from "../../types/workspace";
 import { useDispatch } from "react-redux";
 import { appActions } from "../../store/appSlice";
-import { CustomSelectInput } from "../ui/CustomSelectInput";
+import { CustomSelectInput } from "../UI/CustomSelectInput";
 
 interface InviteMembersModalProps {
   isOpen: boolean | null;

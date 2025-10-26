@@ -1,11 +1,11 @@
 import React from "react";
 import { Plus } from "lucide-react";
 import type { Workspace } from "../types/workspace";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/UI/Button";
 import WorkspaceItem from "../components/Dashboard/WorkspaceItem";
 import type { PageType } from "../types/dashboard";
-import Loading from "../components/ui/Loading";
-import HoverDisabler from "../components/ui/HoverDisabler";
+import Loading from "../components/UI/Loading";
+import HoverDisabler from "../components/UI/HoverDisabler";
 
 interface HomePageProps {
   workspaces?: Workspace[];

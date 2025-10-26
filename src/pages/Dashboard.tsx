@@ -1,9 +1,9 @@
 import React from "react";
 import { Check, Star, Target, Users, Plus } from "lucide-react";
 import StatsCard from "../components/Dashboard/StatsCard";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/UI/Button";
 import ProjectCard from "../components/Dashboard/ProjectCard";
-import Loading from "../components/ui/Loading";
+import Loading from "../components/UI/Loading";
 import { appActions } from "../store/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "../store/store";

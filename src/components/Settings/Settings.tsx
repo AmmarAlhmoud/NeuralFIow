@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { type TeamMember, type Workspace } from "../../types/workspace";
-import { Button } from "../ui/Button";
-import Loading from "../ui/Loading";
+import { Button } from "../UI/Button";
+import Loading from "../UI/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import { appActions } from "../../store/appSlice";

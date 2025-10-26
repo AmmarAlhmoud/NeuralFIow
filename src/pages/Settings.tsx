@@ -12,7 +12,7 @@ import type {
   WorkspaceFormSettings,
 } from "../types/workspace";
 import type { AppDispatch, RootState } from "../store/store";
-import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import { ConfirmationModal } from "../components/UI/ConfirmationModal";
 import { appActions } from "../store/appSlice";
 
 const SettingsPage: React.FC = () => {

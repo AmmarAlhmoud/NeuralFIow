@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
-import ScrollToTop from "../components/ui/ScrollToTop";
+import ScrollToTop from "../components/UI/ScrollToTop";
 import Header from "../components/Dashboard/Header";
 import HomePage from "./Home";
 import type { PageType } from "../types/dashboard";
@@ -14,7 +14,7 @@ import { Outlet } from "react-router-dom";
 import { ProjectModal } from "../components/Dashboard/ProjectModal";
 import type { RootState } from "../store/store";
 import { appActions } from "../store/appSlice";
-import { ConfirmationModal } from "../components/ui/ConfirmationModal";
+import { ConfirmationModal } from "../components/UI/ConfirmationModal";
 import type { Role } from "../types/auth";
 
 const MainPage: React.FC = () => {

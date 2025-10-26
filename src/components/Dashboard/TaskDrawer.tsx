@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import NuralAssistant from "./NuralAssistant";
 import CommentItem from "./CommentItem";
-import { Button } from "../ui/Button";
+import { Button } from "../UI/Button";
 import type { Comment } from "../../types/workspace";
 
 interface TaskDrawerProps {

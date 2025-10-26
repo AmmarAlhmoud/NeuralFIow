@@ -3,13 +3,13 @@ import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { BookOpenText, Key, TextQuote, X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "../UI/Button";
+import { Input } from "../UI/Input";
 import type { Project } from "../../types/workspace";
-import { Textarea } from "../ui/Textarea";
+import { Textarea } from "../UI/Textarea";
 import { appActions } from "../../store/appSlice";
 import { useParams } from "react-router-dom";
-import { CustomSelectInput } from "../ui/CustomSelectInput";
+import { CustomSelectInput } from "../UI/CustomSelectInput";
 
 interface ProjectModalProps {
   isOpen: boolean;

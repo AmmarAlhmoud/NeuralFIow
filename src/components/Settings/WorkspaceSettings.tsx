@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Button } from "../ui/Button";
+import { Button } from "../UI/Button";
 import useTimezone from "../../hooks/useTimezone";
 import type { WorkspaceFormSettings, Workspace } from "../../types/workspace";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
-import TimezoneSelect from "../ui/TimezoneSelect";
+import TimezoneSelect from "../UI/TimezoneSelect";
 
 interface WorkspaceSettingsProps {
   initialData: Workspace | undefined;

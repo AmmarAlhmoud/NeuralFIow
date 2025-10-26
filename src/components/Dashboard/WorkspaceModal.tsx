@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { BookOpenText, Paintbrush, TextQuote, X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "../UI/Button";
+import { Input } from "../UI/Input";
 import type { Workspace } from "../../types/workspace";
-import { Textarea } from "../ui/Textarea";
+import { Textarea } from "../UI/Textarea";
 import toast from "react-hot-toast";
 
 interface WorkspaceModalProps {

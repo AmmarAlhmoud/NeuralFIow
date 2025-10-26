@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import NotificationsItem from "./NotificationsItem";
 import type { NotificationInter } from "../../types/notification";
 import { getColorForIndex } from "../../utils/helperFuns";
-import { Button } from "../ui/Button";
+import { Button } from "../UI/Button";
 import { useDispatch } from "react-redux";
 import { appActions } from "../../store/appSlice";
 import { Trash } from "lucide-react";

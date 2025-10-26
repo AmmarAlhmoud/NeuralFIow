@@ -1,7 +1,7 @@
 import React from "react";
 import { LoginForm } from "../components/Auth/LoginForm";
 import { SignupForm } from "../components/Auth/SignupForm";
-import { Modal } from "../components/ui/Modal";
+import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";
 
 const AuthPage: React.FC = () => {

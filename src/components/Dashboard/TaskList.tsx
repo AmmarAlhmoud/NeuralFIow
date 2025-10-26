@@ -2,11 +2,11 @@ import React from "react";
 import { Plus } from "lucide-react";
 import TaskCard from "./TaskCard";
 import { type Task } from "../../types/workspace";
-import { Button } from "../ui/Button";
-import Loading from "../ui/Loading";
+import { Button } from "../UI/Button";
+import Loading from "../UI/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { appActions } from "../../store/appSlice";
-import HoverDisabler from "../ui/HoverDisabler";
+import HoverDisabler from "../UI/HoverDisabler";
 import type { RootState } from "../../store/store";
 
 interface TaskListProps {

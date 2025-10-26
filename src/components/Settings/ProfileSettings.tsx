@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "../UI/Button";
+import { Input } from "../UI/Input";
 import toast from "react-hot-toast";
 import { type UserProfileSettings } from "../../types/workspace";
 import type { AuthUser } from "../../types/auth";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
-import Loading from "../ui/Loading";
+import Loading from "../UI/Loading";
 
 interface ProfileSettingsProps {
   initialData: AuthUser | null;

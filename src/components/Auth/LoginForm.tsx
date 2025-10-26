@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Input } from "../ui/Input";
-import { Button } from "../ui/Button";
+import { Input } from "../UI/Input";
+import { Button } from "../UI/Button";
 import { GoogleIcon } from "../../assets/Icons/GoogleIcon";
 // import { GitHubIcon } from "../../assets/Icons/GitHubIcon";
 import { BrainIcon } from "../../assets/Icons/BrainIcon";

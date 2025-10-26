@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import useTimezone from "../../hooks/useTimezone";
 import type { NotificationInter } from "../../types/notification";
-import { Button } from "../ui/Button";
+import { Button } from "../UI/Button";
 import type { AppDispatch } from "../../store/store";
 import { appActions } from "../../store/appSlice";
 import { Trash } from "lucide-react";
