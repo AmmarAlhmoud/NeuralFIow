@@ -91,7 +91,10 @@ const Profile: React.FC<ProfileProps> = ({
 
   return (
     <section className={`overflow-hidden ${className}`}>
-      <div className="flex flex-col justify-between px-4 sm:mt-4 xl:mt-0 sm:flex-row sm:items-center sm:space-x-3">
+      <div
+        ref={headerRef}
+        className="min-w-fit flex flex-col justify-between px-4 sm:mt-4 xl:mt-0 sm:flex-row sm:items-center sm:space-x-3"
+      >
         <button
           onClick={() => dipsatch(appActions.toggleTheme())}
           className="p-3 rounded-xl dark:hover:bg-white/10 hover:bg-black/10 group transition-all bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border border-violet-500/30 neon-glow"
@@ -104,7 +107,6 @@ const Profile: React.FC<ProfileProps> = ({
         </button>
 
         <div
-          ref={headerRef}
           className="relative"
           onMouseEnter={openMenu}
           onMouseLeave={closeMenuWithDelay}

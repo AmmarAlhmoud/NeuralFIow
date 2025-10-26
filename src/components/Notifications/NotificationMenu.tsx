@@ -24,13 +24,13 @@ const Notification: React.FC<NotificationProps> = ({
 }) => {
   const [position, setPosition] = useState<{ top: number; left: number }>({
     top: 5,
-    left: 20,
+    left: 0,
   });
 
   useEffect(() => {
     if (anchorRef.current && visible) {
       const rect = anchorRef.current.getBoundingClientRect();
-      setPosition({ top: rect.bottom + 8, left: rect.left - 104 });
+      setPosition({ top: rect.bottom + 8, left: rect.left });
     }
   }, [anchorRef, visible]);
 
@@ -108,7 +108,7 @@ const Notification: React.FC<NotificationProps> = ({
       id={id}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="absolute left-0 bg-white/80 dark:bg-gray-900/70 backdrop-blur-md shadow-2xl rounded-xl border-t-4 border-indigo-500 p-5 min-w-[260px] z-50 text-black dark:text-white transition duration-300"
+      className="absolute left-0 bg-white/80 dark:bg-gray-900/70 backdrop-blur-md shadow-2xl rounded-xl border-t-4 border-indigo-500 p-5 w-[180px] min-w-[180px] md:min-w-[190px] lg:min-w-[210px] lg:-translate-x-3 xl:min-w-[245px] xl:-translate-x-8  z-50 text-black dark:text-white transition duration-300"
       style={{
         top: position.top,
         left: position.left,

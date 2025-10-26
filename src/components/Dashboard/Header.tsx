@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { type HeaderProps } from "../../types/dashboard";
 import Profile from "./Profile";
@@ -7,16 +6,26 @@ import { useAuthContext } from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import { appActions } from "../../store/appSlice";
+import SearchMenu from "../Header/SearchMenu";
+import type {
+  ProjectSearchItem,
+  SearchItemData,
+  TaskSearchItem,
+  WorkspaceSearchItem,
+} from "../../types/search";
 
 const Header: React.FC<HeaderProps> = ({ currentPage }) => {
   const { user, logout } = useAuthContext();
-  const { workspaceId } = useParams();
   const dipsatch = useDispatch<AppDispatch>();
 
   const userProfile = useSelector((state: RootState) => state.app.userProfile);
   const updatedUserProfile = useSelector(
     (state: RootState) => state.app.updateUserProfile
   );
+  const headerRef = useRef<HTMLDivElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchList, setSearchList] = useState<SearchItemData[]>();
 
   const getPageTitle = (page: string) => {
     const titles = {
@@ -44,10 +53,63 @@ const Header: React.FC<HeaderProps> = ({ currentPage }) => {
       }
     };
 
+    const getSearchData = async (searchQuery: string) => {
+      try {
+        const [res1, res2, res3] = await Promise.all([
+          fetch(
+            `${import.meta.env.VITE_API_URL}/workspaces?search=${searchQuery}`,
+            {
+              credentials: "include",
+            }
+          ),
+          fetch(
+            `${import.meta.env.VITE_API_URL}/projects?search=${searchQuery}`,
+            {
+              credentials: "include",
+            }
+          ),
+          fetch(`${import.meta.env.VITE_API_URL}/tasks?search=${searchQuery}`, {
+            credentials: "include",
+          }),
+        ]);
+
+        const [data1, data2, data3] = await Promise.all([
+          res1.json(),
+          res2.json(),
+          res3.json(),
+        ]);
+
+        const updatedData1 = data1.data.map((item: WorkspaceSearchItem) => ({
+          ...item,
+          type: "workspace",
+          memberCount: item.members.length,
+        }));
+        const updatedData2 = data2.data.map((item: ProjectSearchItem) => ({
+          ...item,
+          type: "project",
+          workspaceId: item.workspaceId._id,
+          workspaceName: item.workspaceId.name,
+        }));
+        const updatedData3 = data3.data.map((item: TaskSearchItem) => ({
+          ...item,
+          type: "task",
+        }));
+
+        setSearchList([...updatedData1, ...updatedData2, ...updatedData3]);
+      } catch (error) {
+        console.error("Error fetching search data:", error);
+        throw error;
+      }
+    };
+
+    if (user && searchTerm !== "") {
+      getSearchData(searchTerm);
+    }
+
     if (user && !updatedUserProfile) {
       getUserProfile();
     }
-  }, [dipsatch, updatedUserProfile, user]);
+  }, [dipsatch, searchTerm, updatedUserProfile, user]);
 
   return (
     <header className="sticky top-3 mx-6 mb-8 xl:mb-6 z-20">
@@ -67,16 +129,35 @@ const Header: React.FC<HeaderProps> = ({ currentPage }) => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div ref={headerRef} className="flex items-center space-x-4">
               <div className="relative group">
                 <input
                   type="text"
-                  disabled={workspaceId === undefined}
                   placeholder="Search anything..."
+                  value={searchTerm}
+                  onBlur={() => {
+                    searchTimeoutRef.current = setTimeout(() => {
+                      setSearchTerm("");
+                    }, 200);
+                  }}
+                  onFocus={() => {
+                    if (searchTimeoutRef.current) {
+                      clearTimeout(searchTimeoutRef.current);
+                    }
+                  }}
                   className="w-60 xl:w-80 pl-12 pr-4 py-2.5 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 dark:text-white text-black dark:placeholder-gray-400 placeholder-gray-800 transition-all"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchTerm(e.target.value)
+                  }
                 />
                 <Search className="absolute left-4 top-3.5 w-5 h-5 dark:text-gray-400 text-gray-700 group-focus-within:text-violet-400 transition-colors" />
               </div>
+              <SearchMenu
+                id="search-menu"
+                SearchList={searchList || null}
+                anchorRef={headerRef}
+                visible={searchTerm !== ""}
+              />
             </div>
           </section>
 
