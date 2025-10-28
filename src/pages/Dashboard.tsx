@@ -14,9 +14,7 @@ const DashboardPage: React.FC = () => {
   const currentUserRole = useSelector(
     (state: RootState) => state.app.currentUserRole
   );
-  const teamMembersCount = useSelector(
-    (state: RootState) => state.app.teamMembersCount
-  );
+  const aiStats = useSelector((state: RootState) => state.app.aiStats);
 
   const columns = [
     { id: "active", title: "Active", color: "bg-green-500" },
@@ -88,49 +86,57 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="px-6 pb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatsCard
-          icon={<Check className="w-6 h-6 text-white" />}
-          value={
-            projects
-              ?.filter((proj) => proj.status === "active")
-              ?.length.toString() || "0"
-          }
-          label="Active Projects"
-          change="+12.5%"
-          changeText="vs last week"
-          isPositive={true}
-          bgColor="from-violet-500 to-purple-600"
-        />
-        <StatsCard
-          icon={<Star className="w-6 h-6 text-white" />}
-          value="1,847"
-          label="AI Automations"
-          change="+34.2%"
-          changeText="efficiency boost"
-          isPositive={true}
-          bgColor="from-cyan-500 to-blue-600"
-        />
-        <StatsCard
-          icon={<Target className="w-6 h-6 text-white" />}
-          value="89.3%"
-          label="Completion Rate"
-          change="+5.7%"
-          changeText="this month"
-          isPositive={true}
-          bgColor="from-green-500 to-emerald-600"
-        />
-        <StatsCard
-          icon={<Users className="w-6 h-6 text-white" />}
-          value={teamMembersCount?.toString() || "0"}
-          label="Team Members"
-          change="+3 new"
-          changeText="this week"
-          isPositive={true}
-          bgColor="from-orange-500 to-red-600"
-        />
-      </div>
+      {(currentUserRole === "admin" || currentUserRole === "manager") && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+          <StatsCard
+            icon={<Check className="w-6 h-6 text-white" />}
+            value={aiStats?.activeProjects?.total?.toString() ?? "0"}
+            label="Active Projects"
+            change={`${(aiStats?.activeProjects?.change ?? 0) > 0 ? "+" : ""}${(
+              aiStats?.activeProjects?.change ?? 0
+            ).toFixed(1)}%`}
+            changeText="vs last week"
+            isPositive={(aiStats?.activeProjects?.change ?? 0) >= 0}
+            bgColor="from-violet-500 to-purple-600"
+          />
 
+          <StatsCard
+            icon={<Star className="w-6 h-6 text-white" />}
+            value={aiStats?.automations?.total?.toLocaleString() ?? "0"}
+            label="AI Automations"
+            change={`+${(aiStats?.automations?.efficiencyBoost ?? 0).toFixed(
+              1
+            )}%`}
+            changeText="efficiency boost"
+            isPositive={true}
+            bgColor="from-cyan-500 to-blue-600"
+          />
+
+          <StatsCard
+            icon={<Target className="w-6 h-6 text-white" />}
+            value={
+              aiStats?.completionRate ? `${aiStats.completionRate}%` : "0%"
+            }
+            label="Completion Rate"
+            change={`${(aiStats?.aiAccuracy?.change ?? 0) > 0 ? "+" : ""}${(
+              aiStats?.aiAccuracy?.change ?? 0
+            ).toFixed(1)}%`}
+            changeText="this week"
+            isPositive={(aiStats?.aiAccuracy?.change ?? 0) >= 0}
+            bgColor="from-green-500 to-emerald-600"
+          />
+
+          <StatsCard
+            icon={<Users className="w-6 h-6 text-white" />}
+            value={aiStats?.teamMembers?.total?.toString() ?? "0"}
+            label="Team Members"
+            change={`${aiStats?.teamMembers?.thisWeek ?? 0} new`}
+            changeText="this week"
+            isPositive={true}
+            bgColor="from-orange-500 to-red-600"
+          />
+        </div>
+      )}
       <div className="glassmorphic rounded-2xl p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
