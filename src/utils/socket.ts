@@ -24,7 +24,7 @@ export const disconnectSocket = () => {
 };
 
 // Debug logging in development
-if (import.meta.env.VITE_ENV) {
+if (import.meta.env.VITE_ENV === "development") {
   socket.on("connect", () => {
     console.log("🔌 Connected to Socket.IO server:", socket.id);
   });
