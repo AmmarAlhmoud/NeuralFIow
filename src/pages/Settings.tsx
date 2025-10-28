@@ -144,19 +144,85 @@ const SettingsPage: React.FC = () => {
         );
 
         const data = await res.json();
-        if (res.status === 400 || res.status === 403 || res.status === 404) {
-          if (data.errors) {
-            toast.error(data?.errors[0].message);
-          } else {
-            toast.error(data.message);
+
+        // Handle error responses
+        if (!res.ok) {
+          // Map backend error messages to user-friendly ones
+          const errorMessages: Record<string, string> = {
+            // Self-change errors
+            "Users cannot change their own role or email":
+              "You cannot change your own role or email",
+
+            // Manager permission errors
+            "Managers cannot change roles of other managers or admins":
+              "As a manager, you can only change roles of members and viewers",
+            "Managers cannot promote users to manager or admin roles. Only admins can do this.":
+              "Only admins can promote users to manager or admin",
+            "Managers can only assign member or viewer roles":
+              "You can only assign member or viewer roles",
+            "Managers cannot change emails of other managers or admins":
+              "As a manager, you can only change emails of members and viewers",
+
+            // Owner protection errors
+            "Cannot demote the workspace owner":
+              "The workspace owner cannot be demoted",
+            "Cannot change the workspace owner's email":
+              "Cannot change the workspace owner's email",
+            "Admin role is reserved for the workspace owner":
+              "Only the owner can be an admin",
+
+            // Email-related errors
+            "User with this email not found. They must sign up first.":
+              "No user found with this email. They need to sign up first.",
+            "This user is already a member of this workspace":
+              "This user is already a member of this workspace",
+
+            // General errors
+            "Workspace member not found":
+              "This member no longer exists in the workspace",
+            "No changes provided. Please specify role or email to update.":
+              "Please provide a role or email to update",
+          };
+
+          // Handle validation errors
+          if (data.errors && Array.isArray(data.errors)) {
+            const errorMessage = data.errors[0]?.message || "Validation error";
+            toast.error(errorMessage);
+            return;
           }
+
+          // Handle single error messages
+          const userFriendlyMessage =
+            errorMessages[data.message] || data.message;
+          toast.error(userFriendlyMessage);
+          return;
         }
+
+        // Handle success responses
         if (res.status === 200) {
-          toast.success("Member updated successfully!");
+          // Check if it's "no changes" or actual update
+          if (
+            data.message.includes("No changes detected") ||
+            data.message.includes("already up to date")
+          ) {
+            toast(data.message, {
+              icon: "⚠",
+            });
+          } else {
+            toast.success(data.message || "Member updated successfully!");
+          }
+
+          dispatch(appActions.setClickTeamMember(null));
         }
-        dispatch(appActions.setClickTeamMember(null));
-      } catch (_) {
-        toast.error("Failed to update member. Please try again.");
+      } catch (error) {
+        console.error("❌ Update member error:", error);
+        if (error instanceof TypeError && error.message.includes("fetch")) {
+          toast.error(
+            "Network error. Please check your connection and try again."
+          );
+        } else {
+          toast.error("An unexpected error occurred. Please try again.");
+        }
       }
     };
     const removeTeamMember = async (member: TeamMember) => {

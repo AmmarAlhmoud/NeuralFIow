@@ -5,9 +5,10 @@ import { Button } from "../UI/Button";
 import { Input } from "../UI/Input";
 import toast from "react-hot-toast";
 import type { TeamMember } from "../../types/workspace";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appActions } from "../../store/appSlice";
 import { CustomSelectInput } from "../UI/CustomSelectInput";
+import type { RootState } from "../../store/store";
 
 interface InviteMembersModalProps {
   isOpen: boolean | null;
@@ -27,6 +28,10 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
     email: initialData?.uid?.email || "",
     role: initialData?.role || "member",
   });
+
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,11 +61,14 @@ export const InviteMembersModal: React.FC<InviteMembersModalProps> = ({
   if (!isOpen) return null;
 
   // Roles
-  const roleOptions = [
+  let roleOptions = [
     { value: "viewer", label: "Viewer" },
     { value: "member", label: "Member" },
-    { value: "manager", label: "Manager" },
   ];
+
+  if (currentUserRole === "admin") {
+    roleOptions = [...roleOptions, { value: "manager", label: "Manager" }];
+  }
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">

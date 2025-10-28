@@ -22,6 +22,9 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
   const postCommentRef = useRef<HTMLTextAreaElement>(null);
   const [commnets, setComments] = useState<Comment[] | null>();
   const tryFetch = useSelector((state: RootState) => state.app.tryFetch);
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -209,45 +212,47 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
               </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold dark:text-white text-gray-700 mb-4">
-                AI Neural Assistant
-              </h3>
-              <div className="space-y-3">
-                <button
-                  className="w-full relative overflow-hidden bg-gradient-to-r dark:from-violet-600/20 dark:to-violet-600/20 from-violet-600 to-violet-600 border border-violet-500/30 dark:text-violet-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-violet-600/30 transition-all duration-300 hover:scale-105 group"
-                  onClick={() => handleGenerateSummary()}
-                >
-                  <span className="flex items-center space-x-3">
-                    <FileText className="w-5 h-5" />
-                    <span>AI Summarize Task</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
+            {currentUserRole !== "viewer" && (
+              <div>
+                <h3 className="font-semibold dark:text-white text-gray-700 mb-4">
+                  AI Neural Assistant
+                </h3>
+                <div className="space-y-3">
+                  <button
+                    className="w-full relative overflow-hidden bg-gradient-to-r dark:from-violet-600/20 dark:to-violet-600/20 from-violet-600 to-violet-600 border border-violet-500/30 dark:text-violet-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-violet-600/30 transition-all duration-300 hover:scale-105 group"
+                    onClick={() => handleGenerateSummary()}
+                  >
+                    <span className="flex items-center space-x-3">
+                      <FileText className="w-5 h-5" />
+                      <span>AI Summarize Task</span>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                  </button>
 
-                <button
-                  className="w-full relative overflow-hidden bg-gradient-to-r dark:from-cyan-600/20 dark:to-cyan-600/20 from-cyan-600 to-cyan-600 border border-cyan-500/30 dark:text-cyan-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-cyan-600/30 transition-all duration-300 hover:scale-105 group"
-                  onClick={() => handleGenerateٍSubtasks()}
-                >
-                  <span className="flex items-center space-x-3">
-                    <Plus className="w-5 h-5" />
-                    <span>Generate Subtasks</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
+                  <button
+                    className="w-full relative overflow-hidden bg-gradient-to-r dark:from-cyan-600/20 dark:to-cyan-600/20 from-cyan-600 to-cyan-600 border border-cyan-500/30 dark:text-cyan-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-cyan-600/30 transition-all duration-300 hover:scale-105 group"
+                    onClick={() => handleGenerateٍSubtasks()}
+                  >
+                    <span className="flex items-center space-x-3">
+                      <Plus className="w-5 h-5" />
+                      <span>Generate Subtasks</span>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                  </button>
 
-                <button
-                  className="w-full relative overflow-hidden bg-gradient-to-r dark:from-orange-600/20 from-orange-600 dark:to-orange-600/20 to-orange-600 border border-orange-500/30 dark:text-orange-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-orange-600/30 transition-all duration-300 hover:scale-105 group"
-                  onClick={() => handleGeneratePriority()}
-                >
-                  <span className="flex items-center space-x-3">
-                    <Zap className="w-5 h-5" />
-                    <span>Suggest Priority</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
+                  <button
+                    className="w-full relative overflow-hidden bg-gradient-to-r dark:from-orange-600/20 from-orange-600 dark:to-orange-600/20 to-orange-600 border border-orange-500/30 dark:text-orange-300 text-white px-4 py-3 rounded-xl font-medium hover:bg-orange-600/30 transition-all duration-300 hover:scale-105 group"
+                    onClick={() => handleGeneratePriority()}
+                  >
+                    <span className="flex items-center space-x-3">
+                      <Zap className="w-5 h-5" />
+                      <span>Suggest Priority</span>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="space-y-4">
               <h3 className="font-semibold dark:text-white text-black mb-4">
@@ -292,18 +297,24 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
                 />
               ))}
 
-              <form onSubmit={postCommentHandler} className="mt-6">
-                <textarea
-                  ref={postCommentRef}
-                  name="comment"
-                  placeholder="Add a neural comment..."
-                  className="w-full px-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl dark:text-white text-black placeholder-gray-400 resize-none focus:outline-none input-glow"
-                  rows={3}
-                ></textarea>
-                <Button type="submit" variant="gradient" className="mt-2 !py-2">
-                  Post Comment
-                </Button>
-              </form>
+              {currentUserRole !== "viewer" && (
+                <form onSubmit={postCommentHandler} className="mt-6">
+                  <textarea
+                    ref={postCommentRef}
+                    name="comment"
+                    placeholder="Add a neural comment..."
+                    className="w-full px-4 py-3 dark:bg-white/5 bg-black/5 border dark:border-white/10 border-black/10 rounded-xl dark:text-white text-black placeholder-gray-400 resize-none focus:outline-none input-glow"
+                    rows={3}
+                  ></textarea>
+                  <Button
+                    type="submit"
+                    variant="gradient"
+                    className="mt-2 !py-2"
+                  >
+                    Post Comment
+                  </Button>
+                </form>
+              )}
             </div>
           </div>
         </div>

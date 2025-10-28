@@ -15,6 +15,8 @@ import { useAuthContext } from "../../hooks/useAuth";
 import { Button } from "../UI/Button";
 import WorkspaceItem from "./WorkspaceItem";
 import Loading from "../UI/Loading";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -25,6 +27,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   setWorkspacesModal,
 }) => {
   const { user, logout } = useAuthContext();
+  const currentUserRole = useSelector(
+    (state: RootState) => state.app.currentUserRole
+  );
 
   const navigationItemsNoWorkspace = [
     {
@@ -44,11 +49,18 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  const navigationItemsWithWorkspace = [
+  let navigationItemsWithWorkspace = [
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { id: "analytics", icon: BarChart3, label: "Analytics" },
+
     { id: "settings", icon: Settings, label: "Settings" },
   ];
+
+  if (currentUserRole === "admin" || currentUserRole === "manager") {
+    navigationItemsWithWorkspace = [
+      ...navigationItemsWithWorkspace,
+      { id: "analytics", icon: BarChart3, label: "Analytics" },
+    ];
+  }
 
   let navigationItems = [];
 

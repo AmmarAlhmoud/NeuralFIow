@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useLocation,
+  useNavigate,
+  useRouteLoaderData,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
@@ -23,6 +28,11 @@ const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const { workspaceId, projectId } = useParams();
   const { user } = useAuthContext();
+  const workspaceLoaded = useRouteLoaderData("workspace");
+  const analyticsLoaderData = useRouteLoaderData("analytics");
+  const settingsLoaderData = useRouteLoaderData("settings");
+  const projectsLoaderData = useRouteLoaderData("projects");
+  const taskLoaderData = useRouteLoaderData("task");
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [workspacesModal, setWorkspacesModal] = useState(false);
@@ -31,7 +41,6 @@ const MainPage: React.FC = () => {
   const [updateProjectData, setUpdateProjectData] = useState<Project | null>();
   const [deleteAction, setDeleteAction] = useState<boolean>(false);
 
-  // App wide state
   const projectModal = useSelector(
     (state: RootState) => state.app.projectModal
   );
@@ -127,23 +136,6 @@ const MainPage: React.FC = () => {
         console.error("Error fetching workspaces:", error);
       }
     };
-    const getCurrentUserRole = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}`,
-          {
-            credentials: "include",
-          }
-        );
-        const data = await res.json();
-        const teamMembers: TeamMember[] | undefined = data.data?.members;
-        const me = teamMembers?.find((m) => m?.uid?.uid === user?.uid);
-        dispatch(appActions.setCurrentUserRole(me?.role as Role) ?? "viewer");
-        dispatch(appActions.setTeamMembersCount(teamMembers?.length || 0));
-      } catch (error) {
-        console.error("Error fetching workspace:", error);
-      }
-    };
     const createWorkspace = async (workspace: Workspace) => {
       try {
         await fetch(`${import.meta.env.VITE_API_URL}/workspaces`, {
@@ -235,6 +227,22 @@ const MainPage: React.FC = () => {
         toast.error("Failed to delete project. Please try again.");
       }
     };
+    const getAIStats = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/workspaces/${workspaceId}/ai-stats`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        if (data.success) {
+          dispatch(appActions.setAIStats(data.data));
+        }
+      } catch (error) {
+        console.error("Error fetching ai stats:", error);
+      }
+    };
 
     if (workspacesData) {
       createWorkspace(workspacesData);
@@ -266,7 +274,55 @@ const MainPage: React.FC = () => {
 
     if (user && workspaceId) {
       getProjects();
-      getCurrentUserRole();
+      if (
+        workspaceLoaded?.userRole === "admin" ||
+        workspaceLoaded?.userRole === "manager" ||
+        analyticsLoaderData?.userRole === "admin" ||
+        analyticsLoaderData?.userRole === "manager"
+      ) {
+        getAIStats();
+      }
+    }
+
+    if (
+      analyticsLoaderData ||
+      workspaceLoaded ||
+      settingsLoaderData ||
+      projectsLoaderData ||
+      taskLoaderData
+    ) {
+      if (workspaceLoaded) {
+        dispatch(
+          appActions.setCurrentUserRole(workspaceLoaded?.userRole as Role) ??
+            "viewer"
+        );
+      }
+
+      if (analyticsLoaderData) {
+        dispatch(
+          appActions.setCurrentUserRole(
+            analyticsLoaderData?.userRole as Role
+          ) ?? "viewer"
+        );
+      }
+      if (settingsLoaderData) {
+        dispatch(
+          appActions.setCurrentUserRole(settingsLoaderData?.userRole as Role) ??
+            "viewer"
+        );
+      }
+      if (projectsLoaderData) {
+        dispatch(
+          appActions.setCurrentUserRole(projectsLoaderData?.userRole as Role) ??
+            "viewer"
+        );
+      }
+      if (taskLoaderData) {
+        dispatch(
+          appActions.setCurrentUserRole(taskLoaderData?.userRole as Role) ??
+            "viewer"
+        );
+      }
     }
   }, [
     user,
@@ -280,6 +336,11 @@ const MainPage: React.FC = () => {
     updateProjectData,
     deleteAction,
     selectedProject,
+    analyticsLoaderData,
+    workspaceLoaded,
+    settingsLoaderData,
+    taskLoaderData,
+    projectsLoaderData,
   ]);
 
   return (

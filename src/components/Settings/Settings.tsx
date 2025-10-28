@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, SlidersHorizontal } from "lucide-react";
 import { type TeamMember, type Workspace } from "../../types/workspace";
 import { Button } from "../UI/Button";
 import Loading from "../UI/Loading";
@@ -24,28 +24,28 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
 
   const userProfile = useSelector((state: RootState) => state.app.userProfile);
 
-  const aiSettings = [
-    {
-      label: "Auto-prioritize tasks",
-      description: "Let AI automatically set task priorities",
-      enabled: true,
-    },
-    {
-      label: "Generate subtasks",
-      description: "AI breaks down complex tasks automatically",
-      enabled: true,
-    },
-    {
-      label: "Smart notifications",
-      description: "Intelligent notification timing",
-      enabled: false,
-    },
-    {
-      label: "Workflow optimization",
-      description: "AI suggests process improvements",
-      enabled: true,
-    },
-  ];
+  // const aiSettings = [
+  //   {
+  //     label: "Auto-prioritize tasks",
+  //     description: "Let AI automatically set task priorities",
+  //     enabled: true,
+  //   },
+  //   {
+  //     label: "Generate subtasks",
+  //     description: "AI breaks down complex tasks automatically",
+  //     enabled: true,
+  //   },
+  //   {
+  //     label: "Smart notifications",
+  //     description: "Intelligent notification timing",
+  //     enabled: false,
+  //   },
+  //   {
+  //     label: "Workflow optimization",
+  //     description: "AI suggests process improvements",
+  //     enabled: true,
+  //   },
+  // ];
 
   let teamMembersList: React.ReactNode;
   const teamMembers: TeamMember[] | undefined = workspace?.members;
@@ -82,13 +82,22 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
 
   return (
     <div className="px-6 pb-6">
-      <div className="mb-8 glassmorphic rounded-2xl p-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r dark:from-white dark:to-gray-300 from-black to-gray-700 bg-clip-text text-transparent mb-2">
-          Neural Settings
-        </h1>
-        <p className="dark:text-gray-400 text-gray-800">
-          Configure your AI workspace and team preferences
-        </p>
+      <div className="glassmorphic rounded-2xl p-8 border border-white/10 mb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r dark:from-white dark:to-gray-300 from-black to-gray-700 bg-clip-text text-transparent mb-2">
+              Neural Settings
+            </h1>
+            <p className="dark:text-gray-400 text-gray-600 text-md">
+              Configure your AI workspace and team preferences
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+              <SlidersHorizontal className="w-10 h-10 text-white" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -123,7 +132,8 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
         </div>
 
         <div className="space-y-8">
-          {currentUser && (
+          {/* TODO: Feature to the future  */}
+          {/* {currentUser && (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -174,7 +184,7 @@ const Settings: React.FC<SettingsProps> = ({ workspace }) => {
                 Save AI Settings
               </Button>
             </form>
-          )}
+          )} */}
 
           {currentUser && <WorkspaceSettings initialData={workspace} />}
         </div>

@@ -25,6 +25,10 @@ import ProfilePage from "./pages/Profile";
 import NotificationPage from "./pages/Notification";
 import { connectSocket, disconnectSocket, socket } from "./utils/socket";
 import type { AICompletedData } from "./types/workspace";
+import {
+  allMembersLoader,
+  managerOrAdminLoader,
+} from "./utils/ProtectedRouteLoader";
 
 const router = createBrowserRouter([
   {
@@ -44,24 +48,36 @@ const router = createBrowserRouter([
       {
         path: "workspace/:workspaceId",
         element: <DashboardPage />,
+        id: "workspace",
+        loader: allMembersLoader,
       },
       {
         path: "workspace/:workspaceId/project/:projectId",
         element: <ProjectsPage />,
+        id: "projects",
+        loader: allMembersLoader,
       },
       {
         path: "workspace/:workspaceId/project/:projectId/task/:taskId",
         element: <ProjectsPage />,
+        id: "task",
+        loader: allMembersLoader,
       },
-      { path: "workspace/:workspaceId/analytics", element: <AnalyticsPage /> },
-      { path: "workspace/:workspaceId/settings", element: <SettingsPage /> },
+      {
+        path: "workspace/:workspaceId/analytics",
+        element: <AnalyticsPage />,
+        id: "analytics",
+        loader: managerOrAdminLoader,
+      },
+      {
+        path: "workspace/:workspaceId/settings",
+        element: <SettingsPage />,
+        id: "settings",
+        loader: allMembersLoader,
+      },
       {
         path: "notifications/:noteId?",
         element: <NotificationPage />,
-      },
-      {
-        path: "notifications/:noteId",
-        element: <div>Item</div>,
       },
     ],
   },
@@ -124,7 +140,7 @@ const App: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [dispatch]);
 
   // Backend session check
   useEffect(() => {

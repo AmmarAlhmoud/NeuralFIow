@@ -9,6 +9,7 @@ import type {
 } from "../types/workspace";
 import type { AuthUser } from "../types/auth";
 import type { InvitationStatus } from "../types/notification";
+import type { AIStats } from "../types/aiStats";
 
 interface AppState {
   isDarkMode: boolean;
@@ -35,7 +36,8 @@ interface AppState {
   postComment: Comment | null;
   tryFetch: boolean | null;
   currentUserRole: string | null;
-  teamMembersCount: number | null;
+  isLoadingUserRole: boolean;
+  aiStats: AIStats | null;
 }
 
 const initialState: AppState = {
@@ -63,7 +65,8 @@ const initialState: AppState = {
   postComment: null,
   tryFetch: null,
   currentUserRole: "viewer",
-  teamMembersCount: 0,
+  isLoadingUserRole: false,
+  aiStats: null,
 };
 
 const appSlice = createSlice({
@@ -156,8 +159,11 @@ const appSlice = createSlice({
     setCurrentUserRole(state, action: PayloadAction<string | null>) {
       state.currentUserRole = action.payload;
     },
-    setTeamMembersCount(state, action: PayloadAction<number | null>) {
-      state.teamMembersCount = action.payload;
+    setLoadingUserRole: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingUserRole = action.payload;
+    },
+    setAIStats(state, action: PayloadAction<AIStats | null>) {
+      state.aiStats = action.payload;
     },
   },
 });
