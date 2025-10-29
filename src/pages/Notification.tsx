@@ -194,7 +194,7 @@ const NotificationPage: React.FC = () => {
   } else {
     if (notifications.length === 0) {
       content = (
-        <div className="glassmorphic rounded-2xl p-8 min-h-150 flex flex-col items-center justify-center text-md font-semibold">
+        <div className="glassmorphic rounded-2xl p-8 min-h-150 flex flex-col items-center justify-center text-md font-semibold !text-gray-700">
           <p>No updates right now. Stay tuned!</p>
         </div>
       );

@@ -8,9 +8,9 @@ interface AnimatedBackgroundProps {
 const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
   children,
 }) => (
-  <div className="font-inter bg-white dark:bg-gray-950 w-full min-h-screen relative overflow-hidden">
+  <div className="font-inter bg-gray-200 dark:bg-gray-950 w-full min-h-screen relative overflow-hidden">
     <FloatingParticles />
-    <div className="w-full h-full">{children}</div>
+    <div className="h-full w-full ">{children}</div>
   </div>
 );
 

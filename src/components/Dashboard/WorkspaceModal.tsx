@@ -58,7 +58,7 @@ export const WorkspaceModal: React.FC<WorkspaceModalProps> = ({
 
   const modalContent = (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="flex flex-col glassmorphic rounded-2xl p-6 max-w-sm w-full  neon-glow animate-fade-in">
+      <div className="flex flex-col glassmorphic-white rounded-2xl p-6 max-w-sm w-full  neon-glow animate-fade-in">
         <X
           className="text-dark dark:text-white w-5 h-5 self-end hover:scale-110 transition-transform duration-100 ease-in-out"
           onClick={onClose}

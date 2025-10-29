@@ -8,15 +8,17 @@ import {
   Home,
   UserRoundCog,
   Bell,
+  HomeIcon,
 } from "lucide-react";
 import type { SidebarProps, PageType } from "../../types/dashboard";
-import Profile from "./Profile";
+import Profile from "../Header/Profile";
 import { useAuthContext } from "../../hooks/useAuth";
 import { Button } from "../UI/Button";
 import WorkspaceItem from "./WorkspaceItem";
 import Loading from "../UI/Loading";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
@@ -27,6 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   setWorkspacesModal,
 }) => {
   const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
+
   const currentUserRole = useSelector(
     (state: RootState) => state.app.currentUserRole
   );
@@ -48,6 +52,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       label: "Notifications",
     },
   ];
+
+  const handleHome = () => {
+    // Clear all forward history and go to home
+    navigate("/", { replace: true });
+
+    // Optional: Clear the entire history stack
+    window.history.pushState(null, "", "/");
+  };
 
   let navigationItemsWithWorkspace = [
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -200,8 +212,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <button
+        title="Go Back Home Page"
+        onClick={handleHome}
+        className="absolute -right-4 top-4 w-8 h-8 glassmorphic rounded-full flex items-center justify-center hover:neon-glow group transition-all"
+      >
+        <HomeIcon className="w-4 h-4 dark:text-gray-400 text-gray-800 dark:group-hover:text-violet-400 group-hover:text-violet-800 transition-all duration-300" />
+      </button>
+
+      <button
+        title={`${isCollapsed ? "Open Sidebar" : "Collapse Sidebar"}`}
         onClick={onToggle}
-        className="absolute -right-4 top-8 w-8 h-8 glassmorphic rounded-full flex items-center justify-center hover:neon-glow group transition-all"
+        className="absolute -right-4 top-14 w-8 h-8 glassmorphic rounded-full flex items-center justify-center hover:neon-glow group transition-all"
       >
         <ChevronLeft
           className={`w-4 h-4 dark:text-gray-400 text-gray-800 dark:group-hover:text-violet-400 group-hover:text-violet-800 transition-all duration-300 ${

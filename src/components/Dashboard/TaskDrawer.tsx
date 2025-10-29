@@ -176,7 +176,7 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ isOpen }) => {
         }}
       ></div>
       <div
-        className={`fixed right-0 top-0 h-full w-105 glassmorphic z-40 transform transition-transform duration-400 ${
+        className={`fixed right-0 top-0 h-full w-105 glassmorphic-white z-40 transform transition-transform duration-400 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

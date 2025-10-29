@@ -6,7 +6,7 @@ import { useAuthContext } from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import { appActions } from "../../store/appSlice";
-import SearchMenu from "../Header/SearchMenu";
+import SearchMenu from "./SearchMenu";
 import type {
   ProjectSearchItem,
   SearchItemData,

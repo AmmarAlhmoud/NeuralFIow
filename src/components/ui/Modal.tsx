@@ -24,11 +24,11 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="glassmorphic rounded-2xl p-6 max-w-sm w-full text-center neon-glow animate-fade-in">
+      <div className="glassmorphic-white rounded-2xl p-6 max-w-sm w-full text-center neon-glow animate-fade-in">
         <div className="w-16 h-16 bg-gradient-to-r from-neon-fuchsia to-neon-scarlet rounded-full flex items-center justify-center mx-auto mb-4">
           {title === "Success" && (
             <svg
-              className="w-8 h-8 text-white"
+              className="w-8 h-8 text-black drak:text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -43,7 +43,7 @@ export const Modal: React.FC<ModalProps> = ({
           )}
           {title === "Oops!" && (
             <svg
-              className="w-10 h-10 text-white"
+              className="w-10 h-10 text-black drak:text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -57,8 +57,10 @@ export const Modal: React.FC<ModalProps> = ({
             </svg>
           )}
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 mb-4">{messagesList}</p>
+        <h3 className="text-xl font-semibold text-black drak:text-white mb-2">
+          {title}
+        </h3>
+        <p className="text-gray-800 dark:text-gray-400 mb-4">{messagesList}</p>
         <Button onClick={onClose} size="lg-full" className="px-6 py-2">
           Continue
         </Button>

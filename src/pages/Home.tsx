@@ -31,7 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
   if (workspaces !== undefined && workspaces?.length === 0) {
     workspacesList = (
-      <div className="text-lg text-gray-700 dark:text-gray-500 text-center mt-40">
+      <div className="text-md text-gray-800 dark:text-gray-100 text-center mt-40">
         No workspaces available
       </div>
     );

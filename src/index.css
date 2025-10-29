@@ -17,6 +17,18 @@
 @layer utilities {
   .glassmorphic {
     /* Light mode */
+    /* background: #f1f5f9; */
+    @apply bg-transparent;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    @apply shadow-lg;
+    /* Dark mode */
+    @apply dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.1)];
+  }
+
+  .glassmorphic-white {
+    /* Light mode */
     background: #f1f5f9;
     border: 1px solid rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
