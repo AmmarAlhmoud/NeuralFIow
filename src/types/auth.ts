@@ -10,8 +10,11 @@ export interface SignupFormData {
   password: string;
   confirmPassword: string;
 }
+export interface ForgotPasswordFormData {
+  email: string;
+}
 
-export type AuthMode = "login" | "signup";
+export type AuthMode = "login" | "signup" | "forgot-password";
 export type AuthFnType = {
   email: string;
   password: string;
@@ -26,6 +29,7 @@ export interface AuthState {
   message: string | null;
 }
 
+export type AuthProviderType = "password" | "google.com" | "github.com";
 export interface AuthUser {
   _id?: string;
   uid: string;
@@ -33,8 +37,8 @@ export interface AuthUser {
   name: string | null;
   avatarURL: string | null;
   position?: string;
-  provider?: string | null;
   isOnline?: boolean;
+  provider?: AuthProviderType;
 }
 
 export interface AuthContextType {

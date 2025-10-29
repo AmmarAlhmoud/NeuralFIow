@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Sidebar from "../components/Dashboard/Sidebar";
 import ScrollToTop from "../components/UI/ScrollToTop";
-import Header from "../components/Dashboard/Header";
+import Header from "../components/Header/Header";
 import HomePage from "./Home";
 import type { PageType } from "../types/dashboard";
 import type { Project, TeamMember, Workspace } from "../types/workspace";

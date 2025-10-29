@@ -4,16 +4,20 @@ import {
   signInWithEmail,
   signUpWithEmail,
   signInWithGoogle,
+  sendPasswordReset,
 } from "../firebase/auth";
 import type {
   AuthState,
   AuthMode,
   LoginFormData,
   SignupFormData,
+  ForgotPasswordFormData,
+  AuthProviderType,
 } from "../types/auth";
 import { AuthContext } from "../context/AuthContext";
 import { getIdTokenOrThrow } from "../firebase/auth";
 import { connectSocket } from "../utils/socket";
+import toast from "react-hot-toast";
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -86,16 +90,13 @@ export const useAuth = () => {
           email: firebaseUser.email ?? "",
           name: firebaseUser.displayName ?? null,
           avatarURL: firebaseUser.photoURL ?? null,
-          provider: firebaseUser.providerData[0].providerId ?? null,
+          provider:
+            (firebaseUser.providerData[0].providerId as AuthProviderType) ||
+            "password",
         });
         connectSocket();
 
-        setAuthState((prev) => ({
-          ...prev,
-          isLoading: false,
-          title: "Success",
-          message: "Login successful! Welcome back to NeuralFlow.",
-        }));
+        toast.success("Welcome Back to NeuralFlow 🖐🏻");
       } catch (error: unknown) {
         let message = "Something went wrong with your login. Please try again.";
         if (error instanceof Error) {
@@ -167,7 +168,9 @@ export const useAuth = () => {
           email: firebaseUser.email ?? "",
           name: firebaseUser.displayName ?? signupData.fullName ?? null,
           avatarURL: firebaseUser.photoURL ?? null,
-          provider: firebaseUser.providerData[0].providerId ?? null,
+          provider:
+            (firebaseUser.providerData[0].providerId as AuthProviderType) ||
+            "password",
         };
 
         // Write user to DB on the backend
@@ -181,13 +184,7 @@ export const useAuth = () => {
         handleAuthUser(freshUser);
         connectSocket();
 
-        setAuthState((prev) => ({
-          ...prev,
-          isLoading: false,
-          title: "Success",
-          message:
-            "Account created successfully! Welcome to the future of productivity.",
-        }));
+        toast.success("Welcome to the future of productivity");
       } catch (error: unknown) {
         let message =
           "Something went wrong with your signup. Please try again.";
@@ -214,6 +211,96 @@ export const useAuth = () => {
     [handleAuthUser]
   );
 
+  // FORGOT PASSWORD (email)
+  const forgotPassword = useCallback(
+    async (forgotPasswordData: ForgotPasswordFormData) => {
+      setAuthState((prev) => ({
+        ...prev,
+        isLoading: true,
+        message: null,
+        title: null,
+      }));
+
+      const schema = z.object({
+        email: z.email("Invalid email address"),
+      });
+
+      const result = schema.safeParse(forgotPasswordData);
+      if (!result.success) {
+        const message = result.error.issues
+          .map((issue) => issue.message)
+          .join("\n");
+        setAuthState((prev) => ({
+          ...prev,
+          isLoading: false,
+          title: "Oops!",
+          message,
+        }));
+        return;
+      }
+
+      try {
+        const checkResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/check-provider`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: forgotPasswordData.email }),
+          }
+        );
+
+        const providerData = await checkResponse.json();
+
+        // If user signed up with Google, block password reset
+        if (providerData.provider === "google.com") {
+          setAuthState((prev) => ({
+            ...prev,
+            isLoading: false,
+            title: "Oops!",
+            message:
+              "This account uses Google Sign-In. Please sign in with Google instead.",
+          }));
+          return;
+        }
+
+        await sendPasswordReset(forgotPasswordData.email);
+
+        setAuthState((prev) => ({
+          ...prev,
+          isLoading: false,
+          title: "Success",
+          message: `Password reset email sent to ${forgotPasswordData.email}. Please check your inbox.`,
+        }));
+
+        setTimeout(() => {
+          switchMode("login");
+        }, 3000);
+      } catch (error: unknown) {
+        let message = "Failed to send password reset email. Please try again.";
+        if (error instanceof Error) {
+          if (error.message.includes("user-not-found")) {
+            message =
+              "If this email is registered, you will receive a password reset link.";
+          } else if (error.message.includes("invalid-email")) {
+            message = "Invalid email address.";
+          } else if (error.message.includes("too-many-requests")) {
+            message = "Too many requests. Please try again later.";
+          }
+        }
+
+        setAuthState((prev) => ({
+          ...prev,
+          isLoading: false,
+          title: "Oops!",
+          message,
+        }));
+      }
+    },
+    [switchMode]
+  );
+
   // SOCIAL LOGIN (Google only; GitHub placeholder)
   const socialLogin = useCallback(
     async (provider: "google" | "github") => {
@@ -234,7 +321,9 @@ export const useAuth = () => {
             email: firebaseUser.email ?? "",
             name: firebaseUser.displayName ?? null,
             avatarURL: firebaseUser.photoURL ?? null,
-            provider: firebaseUser.providerData[0].providerId ?? null,
+            provider:
+              (firebaseUser.providerData[0].providerId as AuthProviderType) ||
+              "password",
           };
 
           // Bootstrap backend user
@@ -247,12 +336,7 @@ export const useAuth = () => {
 
           handleAuthUser(freshUser);
 
-          setAuthState((prev) => ({
-            ...prev,
-            title: "Success",
-            isLoading: false,
-            message: "Google login successful! Welcome to NeuralFlow.",
-          }));
+          toast.success("Welcome to NeuralFlow 🖐🏻");
         } catch (error: unknown) {
           let message = "Google sign-in failed. Please try again.";
           if (error instanceof Error) {
@@ -301,6 +385,7 @@ export const useAuth = () => {
     switchMode,
     login,
     signup,
+    forgotPassword,
     socialLogin,
     clearMessage,
   };

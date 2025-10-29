@@ -5,7 +5,7 @@ import { TimezoneProvider } from "./context/TimezoneProvider";
 import { onAuthStateChanged } from "firebase/auth";
 import toast, { Toaster } from "react-hot-toast";
 import { X, Check } from "lucide-react";
-import type { AuthUser } from "./types/auth";
+import type { AuthUser, AuthProviderType } from "./types/auth";
 import { signOut } from "./firebase/auth";
 import { auth } from "./firebase/config";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +29,8 @@ import {
   allMembersLoader,
   managerOrAdminLoader,
 } from "./utils/ProtectedRouteLoader";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AnimatedAuthBackground from "./components/Background/AnimatedAuthBackground";
 
 const router = createBrowserRouter([
   {
@@ -86,9 +88,19 @@ const router = createBrowserRouter([
     path: "auth",
     element: (
       <ProtectedRouteNoUser>
-        <AnimatedBackground>
+        <AnimatedAuthBackground>
           <AuthPage />
-        </AnimatedBackground>
+        </AnimatedAuthBackground>
+      </ProtectedRouteNoUser>
+    ),
+  },
+  {
+    path: "auth/reset-password",
+    element: (
+      <ProtectedRouteNoUser>
+        <AnimatedAuthBackground>
+          <ResetPasswordPage />
+        </AnimatedAuthBackground>
       </ProtectedRouteNoUser>
     ),
   },
@@ -128,7 +140,9 @@ const App: React.FC = () => {
           email: firebaseUser.email,
           name: firebaseUser.displayName,
           avatarURL: firebaseUser.photoURL,
-          provider: firebaseUser.providerData[0].providerId,
+          provider:
+            (firebaseUser.providerData[0].providerId as AuthProviderType) ||
+            "password",
         };
         setUser(authUser);
         connectSocket();

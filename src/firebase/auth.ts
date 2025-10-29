@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   updateProfile,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 import { auth, googleProvider } from "./config";
@@ -36,6 +37,20 @@ export const signUpWithEmail = async ({
 
 export const signInWithGoogle = () => {
   return signInWithPopup(auth, googleProvider);
+};
+
+export const sendPasswordReset = async (email: string): Promise<void> => {
+  const actionCodeSettings = {
+    url: `${window.location.origin}/auth/reset-password`,
+    handleCodeInApp: false,
+  };
+
+  try {
+    await sendPasswordResetEmail(auth, email, actionCodeSettings);
+  } catch (error) {
+    console.error("Password reset error:", error);
+    throw error;
+  }
 };
 
 export async function getIdTokenOrThrow(): Promise<string> {
