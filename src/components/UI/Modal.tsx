@@ -57,7 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
             </svg>
           )}
         </div>
-        <h3 className="text-xl font-semibold text-black drak:text-white mb-2">
+        <h3 className="text-xl font-semibold text-black dark:text-white mb-2">
           {title}
         </h3>
         <p className="text-gray-800 dark:text-gray-400 mb-4">{messagesList}</p>
