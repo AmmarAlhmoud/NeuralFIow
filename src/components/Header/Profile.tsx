@@ -93,7 +93,7 @@ const Profile: React.FC<ProfileProps> = ({
     <section className={`overflow-hidden ${className}`}>
       <div
         ref={headerRef}
-        className="min-w-fit flex flex-col justify-between px-4 sm:mt-4 xl:mt-0 sm:flex-row sm:items-center sm:space-x-3"
+        className="min-w-fit flex flex-col gap-1.5 sm:gap-0 justify-between px-4 sm:mt-4 xl:mt-0 sm:flex-row sm:items-center sm:space-x-3"
       >
         <button
           onClick={() => dipsatch(appActions.toggleTheme())}
@@ -143,8 +143,8 @@ const Profile: React.FC<ProfileProps> = ({
         </button>
       </div>
 
-      <NavLink to="/profile">
-        <div className="w-50 max-w-full flex items-center xl:flex-row space-x-3 p-2 rounded-xl hover:bg-gray-500/10 dark:hover:bg-white/10 cursor-pointer group transition-all overflow-hidden">
+      <NavLink to="/profile" className="mt-6 sm:mt-0">
+        <div className="sm:h-auto max-h-full w-40 sm:w-50 max-w-full flex flex-col items-center sm:flex-row sm:items-center xl:flex-row space-x-3 p-2 rounded-xl hover:bg-gray-500/10 dark:hover:bg-white/10 cursor-pointer group transition-all overflow-hidden">
           <div className="relative w-10 h-10 transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(183,79,214,0.4)]">
             <img
               src={avatarURL}
@@ -154,7 +154,7 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900 animate-pulse"></div>
           </div>
 
-          <div className="text-right">
+          <div className="text-center sm:text-right mt-1 sm:mt-0">
             <div className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[#b74fd6]">
               {userData?.name}
             </div>

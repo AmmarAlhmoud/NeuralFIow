@@ -26,7 +26,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="glassmorphic rounded-2xl p-6 max-w-sm w-full text-center neon-glow animate-fade-in">
+      <div className="glassmorphic-white rounded-2xl p-6 max-w-sm w-full text-center neon-glow animate-fade-in">
         <div className="rounded-full flex items-center justify-center mx-auto mb-4">
           {title === "Confirmation" && (
             <CircleQuestionMark className="w-16 h-16" />

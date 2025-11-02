@@ -28,12 +28,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   workspaces,
   setWorkspacesModal,
 }) => {
-  const { user, logout } = useAuthContext();
+  const { logout } = useAuthContext();
   const navigate = useNavigate();
 
   const currentUserRole = useSelector(
     (state: RootState) => state.app.currentUserRole
   );
+  const userProfile = useSelector((state: RootState) => state.app.userProfile);
 
   const navigationItemsNoWorkspace = [
     {
@@ -56,8 +57,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleHome = () => {
     // Clear all forward history and go to home
     navigate("/", { replace: true });
-
-    // Optional: Clear the entire history stack
     window.history.pushState(null, "", "/");
   };
 
@@ -145,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <Profile
-          userData={user}
+          userData={userProfile}
           handleLogout={logout}
           className="flex flex-row-reverse mb-8 pb-8 border-b dark:border-white/10 border-black/10 sm:hidden"
         />
