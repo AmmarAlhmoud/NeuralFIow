@@ -1,59 +1,205 @@
-# NeuralFlow — AI Task & Workflow Automation Dashboard (Design Prototype)
+# NeuralFlow — AI Task & Workflow Automation (Frontend)
 
 ## Overview
 
-This repository hosts the **design concept and UI/UX prototype** for **NeuralFlow**, an AI-powered task and workflow automation web application. The design emphasizes a **cutting-edge, futuristic SaaS aesthetic** with premium user experience, inspired by the latest trends in 2025 productivity tools.
+**NeuralFlow** is an **AI-powered task and workflow automation dashboard** that combines intelligent assistance, real-time analytics, and collaborative task management in a sleek, futuristic interface.
+This repository contains the **frontend** of the application, developed with **React**, **TypeScript**, and **Tailwind CSS v4**, integrating **Socket.io** for real-time AI communication.
 
-The app's visual design focuses on **dark mode with neon-accented glassmorphism**, combined with optional minimal light mode, creating a sleek, modern, and engaging interface.
+Designed with **glassmorphism** and **neon aesthetics**, NeuralFlow creates a premium SaaS experience with dynamic **dark/light modes**, **role-based permissions**, and **AI-driven automation**.
 
----
-
-## Design Features
-
-### 1. Theme & Colors
-
-- **Primary Theme:** Dark mode with deep charcoal (#0f0f0f) and true black (#121212) backgrounds.
-- **Accent Colors:** Neon fuchsia (#b74fd6) and neon scarlet (#d64f4f).
-- **Optional Light Mode:** Clean and minimal with subtle gradients, maintaining elegance without heavy borders.
-- **Special Effects:** Subtle gradients, blurred frosted panels, particle or glow backgrounds, and smooth transitions between themes.
-
-### 2. Typography
-
-- **Fonts:** Inter or Poppins
-- **Headings:** Bold with letter-spacing for elegance
-- **Body Text:** High-contrast gray-white for readability
-- **Overall Feel:** Modern, professional, and futuristic
-
-### 3. Dashboard Layout
-
-- **Glassmorphic Sidebar:** Workspace/project navigation with modern icons; collapsible with animated transitions.
-- **Floating Top Navbar:** Translucent with global search, notification bell with glowing badge, profile avatar with status dot, and dark/light toggle.
-- **Main Kanban Board:** Draggable columns with frosted glass panels, animated task cards, AI-generated summary badges, and avatars of assignees.
-- **Task Detail Drawer/Modal:** Markdown-style description, AI action buttons (Summarize, Generate Subtasks, Suggest Priority) styled as glowing pill buttons, and real-time comment feed.
-- **Analytics Dashboard:** Interactive neon charts (bar, line, pie) showing task completion, priority distribution, and AI usage metrics.
-- **Settings & Team Management:** Animated member list with role badges and invite buttons.
-
-### 4. Login & Signup Pages
-
-- **Layout:** Centered glassmorphic card with rounded corners and glowing outline.
-- **Background:** Gradient or abstract particle/mesh glow for immersive effect.
-- **Login Page:** Email/password inputs with icons, “Remember me” toggle, “Forgot password” link, primary neon login button, and alternative OAuth options (Google/GitHub).
-- **Signup Page:** Full name, email, password, confirm password fields; primary neon create account button; link to switch to login.
-- **Extra Touches:** Animated input focus, hover effects on buttons with gradient glow, fade-in card animation, optional AI-themed 3D illustration.
-
-### 5. Interactivity & Animations
-
-- Smooth hover effects and micro-animations for buttons and cards.
-- Animated border glow on task hover.
-- Seamless theme transitions with fade and color shift.
-- Floating or glowing particles in hero sections for subtle depth.
+> **Live Preview:** [https://neuralflow-app.netlify.app](https://neuralflow-app.netlify.app)  
+> **Backend API:** [https://neuralfiow-backend.onrender.com](https://neuralfiow-backend.onrender.com)  
+> **API Documentation:** [Postman API Docs](https://documenter.getpostman.com/view/38183390/2sB3WpSgYz)  
+> **Backend Repository:** [NeuralFlow Backend](https://github.com/AmmarAlhmoud/NeuralFIow-Backend)
 
 ---
 
-## Goal
+## Key Features
 
-To establish **NeuralFlow** as a **next-gen productivity app design** that is visually compelling, immersive, and encourages users to engage with AI-powered workflow automation.
+### 1. Role-Based Access Control
+
+| Role        | Permissions                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Admin**   | Full control of workspace settings, projects, tasks, and user management. Can assign any role (including manager).                                 |
+| **Manager** | Manage settings, invite/edit/delete members (_Members/Viewers only_), handle projects and tasks, and access analytics. Cannot assign new managers. |
+| **Member**  | View all projects, tasks, and AI analytics; use AI features. Cannot delete, edit, or invite members.                                               |
+| **Viewer**  | Read-only access to all dashboards; no edit or AI privileges.                                                                                      |
 
 ---
 
-This README is intentionally **focused on design only**. Functionality and development details will be added in a future **complete version** once the app is fully implemented.
+### 2. AI-Powered Workflow Automation
+
+Integrated with **Gemini 2.5 Flash**, NeuralFlow provides advanced automation and productivity insights:
+
+- **AI Summarization:** Instantly summarize long task descriptions.
+- **Subtask Generation:** Suggests subtasks based on task context.
+- **AI Priority Analysis:** Suggests task priority based on data patterns.
+- **Custom Timezones:** Each user can select their timezone; all timestamps adjust dynamically.
+- **Real-Time Socket Queuing:** Queued AI requests via **Socket.io** with confirmation modals for every critical action.
+
+---
+
+### 3. AI Analytics Dashboard
+
+The **NeuralFlow Analytics Page** delivers 8 data-rich metrics powered by aggregation pipelines:
+
+1. Active Projects Tracking
+2. Team Members Growth
+3. Subtasks Generated by AI
+4. Hours Saved Through Automation
+5. AI Accuracy Rate (based on completed vs AI-assisted tasks)
+6. Automation Efficiency Metrics
+7. AI-Assisted Completion Rate
+8. AI Breakdown (Summaries, Subtasks, Priority Analysis)
+
+Each metric includes:
+
+- Week-over-week performance comparison
+- Real-time percentage change tracking
+- Aggregated all-time totals
+- Access restricted to Managers and Admins
+
+---
+
+### 4. Design & UI System
+
+- **Theme Support:** Dark & Light mode with seamless transitions
+- **Accent Colors:**
+
+  - Neon Fuchsia: `#b74fd6`
+  - Neon Scarlet: `#d64f4f`
+
+- **Core Design Language:** Glassmorphism + subtle neon glow + depth shadows
+- **Responsive Layout:** Adapts perfectly across desktop, tablet, and mobile
+- **Notification System:** Toast-based alerts and action confirmations
+- **Global Search:** Searches across workspaces, projects, and tasks
+
+---
+
+## Folder Structure
+
+```
+neuralflow-frontend/
+│
+├── public/                    # Static assets
+│
+├── src/
+│   ├── assets/                # Images and icons
+│   ├── components/            # Reusable UI components
+│   ├── context/               # React contexts (auth, timezone, etc.)
+│   ├── firebase/              # Firebase configuration
+│   ├── hooks/                 # Custom React hooks
+│   ├── pages/                 # Main pages (Dashboard, Auth, etc.)
+│   ├── store/                 # Redux Toolkit store and slices
+│   ├── types/                 # TypeScript type definitions
+│   ├── utils/                 # Helper utilities and constants
+│   ├── App.tsx                # Root app component
+│   ├── main.tsx               # React entry point
+│   ├── index.css              # Global styles
+│   └── vite-env.d.ts          # Vite environment types
+│
+├── .env                       # Environment variables
+├── .env.example               # Example environment file
+├── eslint.config.js           # ESLint configuration
+├── index.html                 # Base HTML template
+├── package-lock.json          # Package lock file
+├── package.json               # Project dependencies and scripts
+├── tsconfig.app.json          # TypeScript app configuration
+├── tsconfig.json              # Root TypeScript configuration
+├── tsconfig.node.json         # Node build configuration
+├── vite.config.ts             # Vite build setup
+└── README.md                  # Documentation
+```
+
+---
+
+## Tech Stack
+
+| Layer                       | Technology                         |
+| --------------------------- | ---------------------------------- |
+| **Framework**               | React 19 + TypeScript              |
+| **Styling**                 | Tailwind CSS v4                    |
+| **State Management**        | Redux Toolkit                      |
+| **Routing**                 | React Router DOM v7                |
+| **Real-Time Communication** | Socket.io Client                   |
+| **AI Model**                | Gemini 2.5 Flash (via backend API) |
+| **Timezones**               | Luxon + TZDB                       |
+| **Validation**              | Zod                                |
+| **UI & Select Inputs**      | React Select                       |
+| **Notifications**           | React Hot Toast                    |
+| **Auth & Hosting**          | Firebase + Netlify                 |
+| **Build Tool**              | Vite                               |
+| **Linting & Quality**       | ESLint + TypeScript strict mode    |
+
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/<your-username>/neuralflow-frontend.git
+cd neuralflow-frontend
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file in the root directory based on `.env.example`:
+
+```
+# Environment Configuration
+VITE_ENV=development
+
+# Firebase Configuration
+# Get these values from Firebase Console > Project Settings > General
+VITE_API_KEY=your-firebase-api-key-here
+VITE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_PROJECT_ID=your-project-id
+VITE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_MESSAGING_SENDER_ID=your-messaging-sender-id
+VITE_APP_ID=your-firebase-app-id
+
+# Backend API Configuration
+VITE_API_URL=https://localhost:8080/api/v1
+VITE_SOCKET_URL=https://localhost:8080
+```
+
+### 4. Run Development Server
+
+```bash
+npm run dev
+```
+
+### 5. Build for Production (Netlify)
+
+```bash
+npm run build:netlify
+```
+
+---
+
+## Scripts
+
+| Command                 | Description                         |
+| ----------------------- | ----------------------------------- |
+| `npm run dev`           | Start local development server      |
+| `npm run build`         | Build optimized production app      |
+| `npm run build:netlify` | Build optimized version for Netlify |
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE.md).
+
+---
+
+**Backend Repository:** [NeuralFlow Backend](https://github.com/AmmarAlhmoud/NeuralFIow-Backend)
+
+**Built with ❤ by Ammar Alhmoud** — powering AI-driven workflow and productivity solutions.
