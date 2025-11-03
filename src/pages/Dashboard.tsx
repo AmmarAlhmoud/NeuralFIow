@@ -144,7 +144,8 @@ const DashboardPage: React.FC = () => {
               Neural Project Board
             </h2>
             <p className="dark:text-gray-400 text-gray-700">
-              AI-powered task management with intelligent prioritization
+              Automate your workflow with AI, keep your team aligned in
+              real-time
             </p>
           </div>
           {(currentUserRole === "admin" || currentUserRole === "manager") && (
