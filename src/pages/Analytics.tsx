@@ -149,7 +149,6 @@ const AnalyticsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* No Data Warning */}
       {!aiStats && (
         <div className="glassmorphic rounded-2xl p-6 border border-yellow-500/20 bg-yellow-500/5">
           <div className="flex items-center gap-3">
@@ -166,7 +165,6 @@ const AnalyticsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Main Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
@@ -221,7 +219,6 @@ const AnalyticsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* AI Feature Breakdown */}
         <div className="glassmorphic rounded-2xl p-8 border border-white/10">
           <h3 className="text-xl font-semibold dark:text-white text-black mb-6 flex items-center gap-2">
             <FileText className="w-5 h-5" />
@@ -272,7 +269,6 @@ const AnalyticsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Completion Rate Section */}
         <div className="glassmorphic rounded-2xl p-8 border border-white/10">
           <h3 className="text-xl font-semibold dark:text-white text-black mb-6 flex items-center gap-2">
             <CheckSquare className="w-5 h-5" />
@@ -328,8 +324,8 @@ const AnalyticsPage: React.FC = () => {
             </div>
             <p className="text-center dark:text-gray-400 text-gray-600 text-sm">
               {completionRate > 0
-                ? "Tasks with AI assistance have a higher completion rate"
-                : "No completed tasks with AI assistance yet"}
+                ? "Tasks completion rate"
+                : "No completed tasks yet"}
             </p>
           </div>
         </div>

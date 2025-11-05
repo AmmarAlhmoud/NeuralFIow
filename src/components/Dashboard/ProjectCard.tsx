@@ -111,15 +111,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           {project.key}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+        <div className="flex items-center gap-x-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
           <span
             title={project.createdBy?.name || "Unknown"}
             className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full"
           >
             Created by:{" "}
             {project.createdBy?.name?.length &&
-            project.createdBy?.name?.length > 16
-              ? project.createdBy?.name.slice(0, 16) + "..."
+            project.createdBy?.name?.length > 10
+              ? project.createdBy?.name.slice(0, 10) + "..."
               : project.createdBy?.name || "Unknown"}
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
